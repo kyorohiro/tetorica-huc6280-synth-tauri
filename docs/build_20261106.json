@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-06",
+  "product": "Tetorica HuC6280 Synth",
+  "desktopVersion": "0.0.1",
+  "webVersion": "0.0.8",
+  "platform": "macOS arm64",
+  "bundlePath": "src-tauri/target/release/bundle/macos/Tetorica HuC6280 Synth.app",
+  "signed": false,
+  "executable": {
+    "bytes": 10655584,
+    "sha256": "ff48d40e914ab9162748b39c56a048007690d765c2911c94b8f28410fd231c06"
+  },
+  "nativeWindowObserved": true,
+  "nativeWindowOrigin": "tauri://localhost",
+  "nativeUiObserved": [
+    "HuC6280 title",
+    "Menu",
+    "Pin",
+    "Wave / PCM loudest option",
+    "keyboard",
+    "Master and Pitch"
+  ],
+  "nativePinToggleTested": false,
+  "hostedActionsRun": false
+}

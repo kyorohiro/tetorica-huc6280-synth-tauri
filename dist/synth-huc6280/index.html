@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tetorica HuC6280 Synth — explore PC Engine Wave, Noise and LFO, import VGM voices or load audio for five-bit DDA PCM playback.">
+  <meta name="theme-color" content="#f3f4f5">
+  <meta name="application-name" content="Tetorica HuC6280 Synth">
+  <meta name="apple-mobile-web-app-title" content="Tetorica HuC6280 Synth">
+  <title>Tetorica HuC6280 Synth</title>
+  <link rel="icon" type="image/webp" href="../tetorica_huc6280_synth.webp">
+  <link rel="apple-touch-icon" href="../tetorica_huc6280_synth.webp">
+  <link rel="stylesheet" href="./synth.css">
+</head>
+<body>
+  <main>
+    <header class="masthead">
+      <a class="laboratory-link" href="https://kyorohiro.github.io/hello_ymfm_wasm/index.html">Tetorica <span>Sound Laboratory</span></a>
+      <nav aria-label="Sound Laboratory">
+        <a href="https://kyorohiro.github.io/hello_ymfm_wasm/synth/index.html">FM2612 Synth</a>
+        <a href="https://kyorohiro.github.io/hello_ymfm_wasm/synth-spu/index.html">SPU Synth</a>
+        <a href="https://kyorohiro.github.io/hello_ymfm_wasm/playground/index.html?mode=huc6280">Playground</a>
+      </nav>
+    </header>
+    <article class="synth-shell" aria-labelledby="synthTitle">
+      <header class="synth-heading">
+        <div class="title-row">
+          <div class="product-identity">
+            <img class="product-icon" src="../tetorica_huc6280_synth.webp" width="112" height="112" alt="" decoding="async">
+            <div class="product-copy">
+              <p class="eyebrow">WAVETABLE · NOISE · LFO · DDA</p>
+              <h1 id="synthTitle">Tetorica <span class="product-name">HuC6280 Synth</span></h1>
+              <p class="description">PC Engine · 6-channel wavetable · Draw a wave. Take the code.</p>
+            </div>
+          </div>
+          <span class="engine-badge">HuC6280 <span>6 HARDWARE CHANNELS</span></span>
+        </div>
+        <div class="audio-toolbar">
+          <div class="transport-actions">
+            <button id="startAudio" class="primary" type="button">Enable audio</button>
+            <button id="stopAudio" type="button">Stop all sound</button>
+          </div>
+          <label class="master-control" for="masterVolume"><span>Master</span>
+            <input id="masterVolume" type="range" min="0" max="3.8" step="0.01" value="0.7" aria-label="Master volume, 0 to 380 percent">
+            <output id="masterVolumeValue" for="masterVolume">70%</output>
+          </label>
+        </div>
+        <p id="audioStatus" class="audio-status" role="status" aria-live="polite">Enable audio, then play the keyboard. Editing does not start audio.</p>
+      </header>
+
+      <section class="spu-monitor huc-monitor" aria-label="Instrument display">
+        <div class="visual-mode-controls" role="group" aria-label="Audio visualization">
+          <button type="button" data-visual-mode="waveform" aria-pressed="true">Waveform</button>
+          <button type="button" data-visual-mode="spectrum" aria-pressed="false">Spectrum</button>
+        </div>
+        <p id="visualizerDescription">Live output after Master volume.</p>
+        <div class="monitor-body">
+          <div class="monitor-plot">
+            <canvas id="outputCanvas" width="900" height="220" role="img" aria-label="Live HuC6280 audio visualization"></canvas>
+          </div>
+          <label class="monitor-pitch" for="pitchBend" title="Software pitch bend, ±2 semitones. Release to return to center. Noise does not follow note pitch.">
+            <span>Pitch</span>
+            <input id="pitchBend" type="range" min="-2" max="2" step="0.01" value="0" orient="vertical" aria-label="Display pitch bend, minus two to plus two semitones">
+            <output id="pitchValue" for="pitchBend">0.00</output>
+          </label>
+        </div>
+      </section>
+
+      <details id="vgmImport" class="huc-card huc-vgm-import" open>
+        <summary>Sounds from VGM</summary>
+        <div class="huc-card-content">
+          <div class="huc-vgm-actions">
+            <button id="loadVgm" type="button">Load VGM / VGZ…</button>
+            <input id="vgmFileInput" class="file-input" type="file" accept=".vgm,.vgz,application/gzip,application/octet-stream" aria-label="Choose a VGM or VGZ file with HuC6280 sound">
+            <button id="cancelVgm" type="button" hidden>Cancel import</button>
+            <p id="vgmStatus" class="subtext" role="status" aria-live="polite">Choose a PC Engine VGM, then select a Wave, Noise, LFO or PCM sound to play.</p>
+          </div>
+          <label class="huc-vgm-option"><input id="vgmKeepLoudestPcm" type="checkbox">Wave / PCM: keep loudest volume variant</label>
+          <p class="subtext">Groups Wave or PCM sounds with identical data and settings, keeping the highest channel volume. Turn off to show every volume variant.</p>
+          <div id="vgmLibrary" hidden>
+            <div class="huc-vgm-actions"><strong id="vgmFileName"></strong><button id="closeVgm" type="button">Close library</button></div>
+            <div class="huc-vgm-filters" role="group" aria-label="Filter VGM sounds">
+              <button type="button" data-vgm-filter="all" aria-pressed="true">All</button>
+              <button type="button" data-vgm-filter="wave" aria-pressed="false">Wave</button>
+              <button type="button" data-vgm-filter="noise" aria-pressed="false">Noise</button>
+              <button type="button" data-vgm-filter="lfo" aria-pressed="false">LFO</button>
+              <button type="button" data-vgm-filter="pcm" aria-pressed="false">PCM</button>
+            </div>
+            <div id="vgmVoices" class="huc-vgm-voices" role="group" aria-label="Extracted HuC6280 sounds"></div>
+            <div class="huc-vgm-actions">
+              <button id="vgmPrevious" type="button">Previous</button><span id="vgmPage" class="subtext"></span><button id="vgmNext" type="button">Next</button>
+            </div>
+            <p id="vgmWarnings" class="subtext huc-vgm-warnings" hidden></p>
+          </div>
+          <p class="subtext">Opening a file keeps the current instrument. Select a sound to load it, then edit its settings or save a preset. Software Envelope is off for imported sounds.</p>
+          <p class="subtext">Imports recorded Wave / Noise settings, complete CH1 + CH2 LFO pairs, supported PCM DAC streams and uniform direct DAC intervals with known boundaries. C4 plays the recorded LFO carrier pitch or PCM rate; LFO CH2 keeps its original period. Direct DAC imports are one-shots; Loop and the original note pitch are not inferred. Song timing, elapsed phase and later software envelopes are not replayed. Irregular or incomplete DAC intervals, unsupported streams and unknown settings are omitted with an explanation.</p>
+        </div>
+      </details>
+
+      <section class="instrument-workspace huc-workspace" aria-label="Instrument editor">
+        <div class="section-heading"><h2>Sound source</h2><p id="voiceCapacity" role="status">Wavetable · 6 voices · round robin</p></div>
+        <div id="voiceEditor"></div>
+      </section>
+
+      <section class="instrument-toolbar" aria-label="Instrument files">
+        <label class="instrument-name-control" for="instrumentName">Instrument name <input id="instrumentName" type="text" maxlength="80" value="Sine" autocomplete="off"></label>
+        <div class="preset-actions">
+          <button id="loadPreset" type="button">Load preset…</button>
+          <input id="presetFileInput" class="file-input" type="file" accept=".json,application/json" aria-label="Choose a HuC6280 instrument preset">
+          <button id="savePreset" type="button">Save preset…</button>
+          <button id="copyCode" type="button">Copy JavaScript</button>
+          <button id="resetPreset" class="quiet-button" type="button">Reset instrument</button>
+        </div>
+        <textarea id="codeOutput" readonly spellcheck="false" rows="8" aria-label="Generated instrument JavaScript" hidden></textarea>
+      </section>
+
+      <section class="keyboard-section" aria-labelledby="keyboardHeading">
+        <div class="section-heading"><h2 id="keyboardHeading">Keyboard</h2><p>Every key plays the selected source. No keyboard split.</p></div>
+        <div class="keyboard-toolbar">
+          <div class="octave-control" role="group" aria-label="Keyboard octave">
+            <button id="octaveDown" type="button" aria-label="Lower keyboard by one octave">−</button>
+            <span>Octave <output id="octaveValue">4</output></span>
+            <button id="octaveUp" type="button" aria-label="Raise keyboard by one octave">+</button>
+          </div>
+          <p class="keyboard-hint">When full, the oldest note is replaced.</p>
+        </div>
+        <div id="keyboardFretboard"></div>
+        <div class="performance-keyboard">
+          <label class="monitor-pitch keyboard-wheel" for="keyboardPitchBend" title="Software pitch bend, ±2 semitones. Release to return to center. Noise does not follow note pitch.">
+            <span>Pitch</span>
+            <input id="keyboardPitchBend" type="range" min="-2" max="2" step="0.01" value="0" orient="vertical" aria-label="Keyboard pitch bend, minus two to plus two semitones">
+            <output id="keyboardPitchValue" for="keyboardPitchBend">0.00</output>
+          </label>
+          <div id="keyboard" class="keyboard-mount"></div>
+        </div>
+      </section>
+      <footer>
+        <p>One HuC6280: six 32-sample, 5-bit wavetable / DAC channels. Noise uses CH5 / CH6. Hardware LFO connects CH2 to CH1; enabling it selects one carrier voice. DDA uses the chip’s five-bit DAC with software PCM supply, rate, pitch and Loop. Envelope, round robin and waveform drawing are software tools. CD-ROM² audio and song playback are not included.</p>
+        <div><a href="https://kyorohiro.github.io/hello_ymfm_wasm/playground/index.html?mode=huc6280">Open Playground</a> · <a href="https://github.com/kyorohiro/hello_ymfm_wasm/blob/main/packages/fm2612/README.md#api-entry-points">API guide</a> · <a href="https://github.com/kyorohiro/hello_ymfm_wasm/blob/main/tetorica_src/runtime/huc6280synth.js">JavaScript source</a></div>
+      </footer>
+    </article>
+    <noscript><p class="noscript-message">Enable JavaScript to play this synthesizer.</p></noscript>
+  </main>
+  <script type="module" src="./synth.js"></script>
+</body>
+</html>

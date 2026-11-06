@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-06",
+  "passed": true,
+  "method": "Rust CPAL service directly to the default physical output; not WebView IPC",
+  "content": "silence",
+  "requestedSeconds": 30,
+  "elapsedSeconds": 30.005596708,
+  "injected25msDelays": 29,
+  "longestWriteGapMs": 45.960208,
+  "finalStatus": {
+    "consumedFrames": 1440256,
+    "credits": 0,
+    "error": null,
+    "queuedFrames": 3584,
+    "receivedFrames": 1443840,
+    "sampleRate": 48000,
+    "underruns": 0
+  },
+  "listeningVerified": false
+}

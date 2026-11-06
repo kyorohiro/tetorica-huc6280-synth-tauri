@@ -1,0 +1,462 @@
+{
+  "schemaVersion": 1,
+  "product": "Tetorica HuC6280 Synth",
+  "productId": "tetorica-huc6280-synth",
+  "version": "0.0.8",
+  "builder": {
+    "name": "source-copy",
+    "minify": false,
+    "bundle": false,
+    "dependencyAnalyzer": {
+      "name": "esbuild",
+      "version": "0.28.2"
+    }
+  },
+  "bundles": [
+    {
+      "path": "synth-huc6280/synth.js",
+      "sourcePath": "docs/synth-huc6280/synth.js",
+      "bytes": 19721,
+      "sha256": "96b60f25ccc56971cc0bb6849710d8ce51719f90dfae49bd71e224cab424935f",
+      "localImports": [
+        "../synth-spu/spu_synth_visualizer.js",
+        "../synth/synth_keyboard.js",
+        "./audio.js",
+        "./audio_import.js",
+        "./dda_pcm.js",
+        "./editor.js",
+        "./preset.js",
+        "./vgm_library.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/processor.js",
+      "sourcePath": "docs/synth-huc6280/processor.js",
+      "bytes": 3506,
+      "sha256": "f0c3094e3dc8def4445b11ab1c8bb985f250d00d8e314955a79f0a37ecb1dc52",
+      "localImports": [
+        "../generated/huc6280_wasm.js",
+        "../js/huc6280audioengine.js",
+        "../js/huc6280synth.js",
+        "./instrument.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/synth.css",
+      "sourcePath": "docs/synth-huc6280/synth.css",
+      "bytes": 7488,
+      "sha256": "19f06e00d95e0ec8adadf7378a52a9585984ba6774607f5cea49124edb8a6d59",
+      "localImports": [
+        "../synth-spu/synth.css"
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "path": "js/huc6280audioengine.js",
+      "sourcePath": "docs/js/huc6280audioengine.js",
+      "bytes": 6271,
+      "sha256": "0d7c581d237779ca2bf360488f8cf75e65d2bcf0ebe1da18fef21416fffd652b",
+      "localImports": []
+    },
+    {
+      "path": "js/huc6280synth.js",
+      "sourcePath": "docs/js/huc6280synth.js",
+      "bytes": 11437,
+      "sha256": "a42b8f4ce90300b3d4a52f68402df9c7936c884f41ea79e9f4bf64fe4b974661",
+      "localImports": [
+        "./soundchip_pitch.js"
+      ]
+    },
+    {
+      "path": "js/opn_fm_vgm.js",
+      "sourcePath": "docs/js/opn_fm_vgm.js",
+      "bytes": 4213,
+      "sha256": "d9535987aa4284e817172b1cff3cfbdbe893cca70b6cebfe4c09f616802bbc1c",
+      "localImports": []
+    },
+    {
+      "path": "js/soundchip_pitch.js",
+      "sourcePath": "docs/js/soundchip_pitch.js",
+      "bytes": 2854,
+      "sha256": "c8bcce0f27c2500d6090b5e56660e697b8b03d7ec011cee4deba05664038bae9",
+      "localImports": []
+    },
+    {
+      "path": "js/vgm_file.js",
+      "sourcePath": "docs/js/vgm_file.js",
+      "bytes": 3428,
+      "sha256": "2539d82ea2b17f5d37b7f66e88bcc948acda4d906613358c14a1bd102c36bf48",
+      "localImports": []
+    },
+    {
+      "path": "js/ym2612vgm.js",
+      "sourcePath": "docs/js/ym2612vgm.js",
+      "bytes": 117637,
+      "sha256": "1587950d955d577262a11e754f533133b8194d65272e740c8b48b9f3b465e06b",
+      "localImports": [
+        "./opn_fm_vgm.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/audio.js",
+      "sourcePath": "docs/synth-huc6280/audio.js",
+      "bytes": 8181,
+      "sha256": "54a0156e3d0f0547ee6459cdc1fbd5468289ba9e4e9004e112fddfc9a9f3ad50",
+      "localImports": []
+    },
+    {
+      "path": "synth-huc6280/audio_import.js",
+      "sourcePath": "docs/synth-huc6280/audio_import.js",
+      "bytes": 2914,
+      "sha256": "c74ac94668853ae847cc71f0181d22500294c97ac9b8581fc6f6df843c8806e6",
+      "localImports": [
+        "./dda_pcm.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/dda_pcm.js",
+      "sourcePath": "docs/synth-huc6280/dda_pcm.js",
+      "bytes": 8665,
+      "sha256": "b9ad0d8579bf636dbdbb856f3a032830d5c7f3553994853aa8e2a8edca66e7e3",
+      "localImports": []
+    },
+    {
+      "path": "synth-huc6280/editor.js",
+      "sourcePath": "docs/synth-huc6280/editor.js",
+      "bytes": 35176,
+      "sha256": "fea1022955c4ae3c1e4f4f593bdef0448552c702b0ebfbb10deb2c4ec2f637e9",
+      "localImports": [
+        "./dda_pcm.js",
+        "./preset.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/instrument.js",
+      "sourcePath": "docs/synth-huc6280/instrument.js",
+      "bytes": 15207,
+      "sha256": "c609147b68b68224a8472f8397a838ef08376cac6bbd52c0d426ca82edf756c7",
+      "localImports": [
+        "../js/huc6280synth.js",
+        "./dda_pcm.js",
+        "./preset.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/preset.js",
+      "sourcePath": "docs/synth-huc6280/preset.js",
+      "bytes": 9696,
+      "sha256": "c3a13cb04e15a9171eae941fb841fd4316f9ae0bdde44da618973e22adcbb775",
+      "localImports": [
+        "./dda_pcm.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/processor.js",
+      "sourcePath": "docs/synth-huc6280/processor.js",
+      "bytes": 3506,
+      "sha256": "f0c3094e3dc8def4445b11ab1c8bb985f250d00d8e314955a79f0a37ecb1dc52",
+      "localImports": [
+        "../generated/huc6280_wasm.js",
+        "../js/huc6280audioengine.js",
+        "../js/huc6280synth.js",
+        "./instrument.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/synth.css",
+      "sourcePath": "docs/synth-huc6280/synth.css",
+      "bytes": 7488,
+      "sha256": "19f06e00d95e0ec8adadf7378a52a9585984ba6774607f5cea49124edb8a6d59",
+      "localImports": [
+        "../synth-spu/synth.css"
+      ]
+    },
+    {
+      "path": "synth-huc6280/synth.js",
+      "sourcePath": "docs/synth-huc6280/synth.js",
+      "bytes": 19721,
+      "sha256": "96b60f25ccc56971cc0bb6849710d8ce51719f90dfae49bd71e224cab424935f",
+      "localImports": [
+        "../synth-spu/spu_synth_visualizer.js",
+        "../synth/synth_keyboard.js",
+        "./audio.js",
+        "./audio_import.js",
+        "./dda_pcm.js",
+        "./editor.js",
+        "./preset.js",
+        "./vgm_library.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/vgm_dac.js",
+      "sourcePath": "docs/synth-huc6280/vgm_dac.js",
+      "bytes": 17013,
+      "sha256": "7c62fea9353af9a9d2139fd64f4459c286883919e07b2a1fab5d9afeeea2b6ba",
+      "localImports": [
+        "../js/ym2612vgm.js",
+        "./dda_pcm.js",
+        "./preset.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/vgm_direct_pcm.js",
+      "sourcePath": "docs/synth-huc6280/vgm_direct_pcm.js",
+      "bytes": 13418,
+      "sha256": "3e835328f8a7eba4bf6adde0c69b161478e7e6471f4415a09fde7539fc957aee",
+      "localImports": [
+        "../js/ym2612vgm.js",
+        "./dda_pcm.js",
+        "./preset.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/vgm_import.js",
+      "sourcePath": "docs/synth-huc6280/vgm_import.js",
+      "bytes": 22552,
+      "sha256": "92ae8eb0955bdbb48b96fe686c37be9df8c925dde6fd3dad88a41c7e68e7c951",
+      "localImports": [
+        "../js/huc6280synth.js",
+        "../js/vgm_file.js",
+        "../js/ym2612vgm.js",
+        "./dda_pcm.js",
+        "./preset.js",
+        "./vgm_dac.js",
+        "./vgm_direct_pcm.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/vgm_library.js",
+      "sourcePath": "docs/synth-huc6280/vgm_library.js",
+      "bytes": 8678,
+      "sha256": "1bcd45d00d4b27a769ed8b4004424a863c1677cea9b4fc5ee463eb29fb92391b",
+      "localImports": [
+        "./dda_pcm.js",
+        "./vgm_import.js",
+        "./vgm_pcm_variants.js"
+      ]
+    },
+    {
+      "path": "synth-huc6280/vgm_pcm_variants.js",
+      "sourcePath": "docs/synth-huc6280/vgm_pcm_variants.js",
+      "bytes": 2228,
+      "sha256": "19f48dbaadf236d78c0ea42accbceb682845744987fa02105e1a09550e555ae3",
+      "localImports": []
+    },
+    {
+      "path": "synth-spu/spu_synth_visualizer.js",
+      "sourcePath": "docs/synth-spu/spu_synth_visualizer.js",
+      "bytes": 10421,
+      "sha256": "0e4cba8d283d728579e592b28a87f008165b5d5d00d1cb4956e90b06f84d6b47",
+      "localImports": []
+    },
+    {
+      "path": "synth-spu/synth.css",
+      "sourcePath": "docs/synth-spu/synth.css",
+      "bytes": 23333,
+      "sha256": "8e45689b279e52db21c5ed6b29e26bd5d10896abcd8c834a1d77bc6950dcd0ad",
+      "localImports": []
+    },
+    {
+      "path": "synth/synth_keyboard.js",
+      "sourcePath": "docs/synth/synth_keyboard.js",
+      "bytes": 10010,
+      "sha256": "b7dc1daea64aa6e061bfdb2295010ee24eddaba51ab7ab6cf87c0f751be7c795",
+      "localImports": [
+        "../js/soundchip_pitch.js"
+      ]
+    }
+  ],
+  "originalInputs": [
+    {
+      "path": "LICENSE",
+      "bytes": 1519,
+      "sha256": "2d2e9213c170a9866c616fa85b6da993a6724e10befc61f468ed9bfb84c4691c"
+    },
+    {
+      "path": "docs/js/huc6280audioengine.js",
+      "bytes": 6271,
+      "sha256": "0d7c581d237779ca2bf360488f8cf75e65d2bcf0ebe1da18fef21416fffd652b"
+    },
+    {
+      "path": "docs/js/huc6280synth.js",
+      "bytes": 11437,
+      "sha256": "a42b8f4ce90300b3d4a52f68402df9c7936c884f41ea79e9f4bf64fe4b974661"
+    },
+    {
+      "path": "docs/js/opn_fm_vgm.js",
+      "bytes": 4213,
+      "sha256": "d9535987aa4284e817172b1cff3cfbdbe893cca70b6cebfe4c09f616802bbc1c"
+    },
+    {
+      "path": "docs/js/soundchip_pitch.js",
+      "bytes": 2854,
+      "sha256": "c8bcce0f27c2500d6090b5e56660e697b8b03d7ec011cee4deba05664038bae9"
+    },
+    {
+      "path": "docs/js/vgm_file.js",
+      "bytes": 3428,
+      "sha256": "2539d82ea2b17f5d37b7f66e88bcc948acda4d906613358c14a1bd102c36bf48"
+    },
+    {
+      "path": "docs/js/ym2612vgm.js",
+      "bytes": 117637,
+      "sha256": "1587950d955d577262a11e754f533133b8194d65272e740c8b48b9f3b465e06b"
+    },
+    {
+      "path": "docs/synth-huc6280/README.md",
+      "bytes": 17542,
+      "sha256": "7360dbeb211909a028d6703408afccf2cc9f29751d98d4002a8e4d55bad11fe7"
+    },
+    {
+      "path": "docs/synth-huc6280/audio.js",
+      "bytes": 8181,
+      "sha256": "54a0156e3d0f0547ee6459cdc1fbd5468289ba9e4e9004e112fddfc9a9f3ad50"
+    },
+    {
+      "path": "docs/synth-huc6280/audio_import.js",
+      "bytes": 2914,
+      "sha256": "c74ac94668853ae847cc71f0181d22500294c97ac9b8581fc6f6df843c8806e6"
+    },
+    {
+      "path": "docs/synth-huc6280/dda_pcm.js",
+      "bytes": 8665,
+      "sha256": "b9ad0d8579bf636dbdbb856f3a032830d5c7f3553994853aa8e2a8edca66e7e3"
+    },
+    {
+      "path": "docs/synth-huc6280/editor.js",
+      "bytes": 35176,
+      "sha256": "fea1022955c4ae3c1e4f4f593bdef0448552c702b0ebfbb10deb2c4ec2f637e9"
+    },
+    {
+      "path": "docs/synth-huc6280/index.html",
+      "bytes": 10197,
+      "sha256": "6cc0935f76806c276fe00c0603b8879b9b6cd88e97727fb7cd6b5d3ff0b7d471"
+    },
+    {
+      "path": "docs/synth-huc6280/instrument.js",
+      "bytes": 15207,
+      "sha256": "c609147b68b68224a8472f8397a838ef08376cac6bbd52c0d426ca82edf756c7"
+    },
+    {
+      "path": "docs/synth-huc6280/preset.js",
+      "bytes": 9696,
+      "sha256": "c3a13cb04e15a9171eae941fb841fd4316f9ae0bdde44da618973e22adcbb775"
+    },
+    {
+      "path": "docs/synth-huc6280/processor.js",
+      "bytes": 3506,
+      "sha256": "f0c3094e3dc8def4445b11ab1c8bb985f250d00d8e314955a79f0a37ecb1dc52"
+    },
+    {
+      "path": "docs/synth-huc6280/synth.css",
+      "bytes": 7488,
+      "sha256": "19f06e00d95e0ec8adadf7378a52a9585984ba6774607f5cea49124edb8a6d59"
+    },
+    {
+      "path": "docs/synth-huc6280/synth.js",
+      "bytes": 19721,
+      "sha256": "96b60f25ccc56971cc0bb6849710d8ce51719f90dfae49bd71e224cab424935f"
+    },
+    {
+      "path": "docs/synth-huc6280/vgm_dac.js",
+      "bytes": 17013,
+      "sha256": "7c62fea9353af9a9d2139fd64f4459c286883919e07b2a1fab5d9afeeea2b6ba"
+    },
+    {
+      "path": "docs/synth-huc6280/vgm_direct_pcm.js",
+      "bytes": 13418,
+      "sha256": "3e835328f8a7eba4bf6adde0c69b161478e7e6471f4415a09fde7539fc957aee"
+    },
+    {
+      "path": "docs/synth-huc6280/vgm_import.js",
+      "bytes": 22552,
+      "sha256": "92ae8eb0955bdbb48b96fe686c37be9df8c925dde6fd3dad88a41c7e68e7c951"
+    },
+    {
+      "path": "docs/synth-huc6280/vgm_library.js",
+      "bytes": 8678,
+      "sha256": "1bcd45d00d4b27a769ed8b4004424a863c1677cea9b4fc5ee463eb29fb92391b"
+    },
+    {
+      "path": "docs/synth-huc6280/vgm_pcm_variants.js",
+      "bytes": 2228,
+      "sha256": "19f48dbaadf236d78c0ea42accbceb682845744987fa02105e1a09550e555ae3"
+    },
+    {
+      "path": "docs/synth-spu/spu_synth_visualizer.js",
+      "bytes": 10421,
+      "sha256": "0e4cba8d283d728579e592b28a87f008165b5d5d00d1cb4956e90b06f84d6b47"
+    },
+    {
+      "path": "docs/synth-spu/synth.css",
+      "bytes": 23333,
+      "sha256": "8e45689b279e52db21c5ed6b29e26bd5d10896abcd8c834a1d77bc6950dcd0ad"
+    },
+    {
+      "path": "docs/synth/synth_keyboard.js",
+      "bytes": 10010,
+      "sha256": "b7dc1daea64aa6e061bfdb2295010ee24eddaba51ab7ab6cf87c0f751be7c795"
+    },
+    {
+      "path": "docs/tetorica_huc6280_synth.webp",
+      "bytes": 413390,
+      "sha256": "b531b8deafa0d0caead2cd5b7f48c4c37d0c40f0fb6bf2c0e711537dee9bd77d"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 55415,
+      "sha256": "25b371d87334725070a1d055e140a426e5aecf6101db517c8be803d363d22849"
+    },
+    {
+      "path": "package.json",
+      "bytes": 4708,
+      "sha256": "de2f6b35b4655643d3353777c1a133ecd17462bcd176b77c7acfa93cc4ca830d"
+    },
+    {
+      "path": "scripts/copy_huc6280_sources.mjs",
+      "bytes": 4528,
+      "sha256": "70be3012696355a8530e5bd3f37d84cc33060cc64e12126f9853a9cd9e1336ec"
+    },
+    {
+      "path": "scripts/copy_readable_modules.mjs",
+      "bytes": 3657,
+      "sha256": "bf58b3f05bfc2a48f7a35a0cb3f797436ed6f379af251e8ecf03240ba297d05a"
+    },
+    {
+      "path": "scripts/package_itch_huc6280_synth.mjs",
+      "bytes": 6528,
+      "sha256": "4d974fd7d56da73d46a9e18ef560b9d407b2f55d08628c9ea3eda4e488524419"
+    },
+    {
+      "path": "scripts/package_itch_huc6280_synth.sh",
+      "bytes": 185,
+      "sha256": "03fd95308181eaefc811851c3810df10490415d789de8ac02d5eeddd46d4b5c8"
+    },
+    {
+      "path": "scripts/runtime_artifacts.mjs",
+      "bytes": 17918,
+      "sha256": "a811bffb77472b2d3d8b11c57d0477e216b867d00c75bf844b4089af0fb69d39"
+    },
+    {
+      "path": "scripts/wasm_sdk_inventory.mjs",
+      "bytes": 24241,
+      "sha256": "b65e5e1966756e6f20f4a47989611a0f1b702446e97d748f92e87eaad245bab5"
+    },
+    {
+      "path": "tetorica_src/runtime/generated/huc6280_wasm.js",
+      "bytes": 13612,
+      "sha256": "81d317f4aac899c00c9a720ab72946c72dde155f9688cbed22b45cb3fb77804f"
+    }
+  ],
+  "sourceArchive": {
+    "path": "sources/huc6280-synth-browser-inputs.zip",
+    "bytes": 565405,
+    "sha256": "5bb1cbec033eedbc0a34fb1ac5f9cd1d644c8b702f72380b7187fadf981a2fef"
+  },
+  "sourceCheck": {
+    "inputs": 12,
+    "files": 18,
+    "sdkVersion": "0.1.7"
+  }
+}
