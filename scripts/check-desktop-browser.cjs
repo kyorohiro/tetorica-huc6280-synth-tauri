@@ -162,6 +162,12 @@ async function run(name, engine, backend) {
     console.log(`CHECK ${name}: HuC6280 desktop toolbar / Pin / lazy audio`);
     await page.goto(backend+'/index.html');
     await page.waitForFunction(()=>window.tetoricaSynthAudio&&document.querySelector('#synthPinButton')?.hidden===false&&document.querySelector('#desktop-audio-native'));
+    for (const id of ['synthMenu','synthMenuButton','synthMenuPanel']) {
+      assert.equal(await page.locator(`#${id}`).count(),1,`${id} stays unique after desktop mounting`);
+    }
+    for (const id of ['hucMenuProjectImport','hucMenuFilesImport','hucMenuProjectExport','hucMenuFileExport']) {
+      assert.equal(await page.locator(`#synthMenu #${id}`).count(),1,`${id} survives desktop mounting`);
+    }
     assert.equal(await page.title(),'Tetorica HuC6280 Synth');
     assert.match(await page.locator('#synthTitle').textContent(),/Tetorica\s+HuC6280 Synth/);
     assert.equal(await page.locator('#loadPreset').textContent(),'Instrument · HuC6280 preset…');
@@ -200,6 +206,9 @@ async function run(name, engine, backend) {
     console.log(`CHECK ${name}: menu VGZ chooser / Wave level23→24 grouping / file cancel keeps sound`);
     await page.locator('#vgmImport').evaluate(node=>{node.open=false;});await menu();const chooser=page.waitForEvent('filechooser');await page.click('#synthMenuVgm');
     await(await chooser).setFiles({name:'self-authored.vgz',mimeType:'application/gzip',buffer:gzipSync(vgm())});
+    await page.waitForFunction(()=>document.querySelectorAll('[data-vgm-voice]').length>0&&document.querySelector('#vgmLibrary').dataset.loading==='false');
+    // Newer Web releases default to keeping only the loudest volume variant.
+    await page.uncheck('#vgmKeepLoudestPcm');
     await page.waitForFunction(()=>document.querySelectorAll('[data-vgm-voice]').length===2&&document.querySelector('#vgmLibrary').dataset.loading==='false');
     assert.equal(await page.locator('#vgmImport').evaluate(node=>node.open),true);
     await page.check('#vgmKeepLoudestPcm');assert.equal(await page.locator('[data-vgm-voice]').count(),1);
@@ -217,7 +226,8 @@ async function run(name, engine, backend) {
     await page.mouse.move(rect.x+rect.width*.2,rect.y+rect.height*.35);await page.mouse.down();
     await page.mouse.move(rect.x+rect.width*.75,rect.y+rect.height*.65,{steps:6});
     current=await state();assert.deepEqual(current.preset,beforeEdit.preset);assert.deepEqual(current.voices,beforeEdit.voices);
-    await page.mouse.up();current=await wait(value=>value.voices.length===0&&JSON.stringify(value.preset.wave)!==JSON.stringify(beforeEdit.preset.wave));
+    await page.mouse.up();current=await wait(value=>JSON.stringify(value.preset.wave)!==JSON.stringify(beforeEdit.preset.wave));
+    assert.deepEqual(current.voices,beforeEdit.voices,'committed Wave edits keep held notes playing');
     assert.equal(current.preset.wave.length,32);assert(current.preset.wave.every(value=>Number.isInteger(value)&&value>=0&&value<=31));
     await page.keyboard.up('a');await audition();
     const beforeAudioCancel=structuredClone((await state()).preset);

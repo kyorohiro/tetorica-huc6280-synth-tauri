@@ -90,9 +90,12 @@
       .synth-menu-actions .toolbar-button { text-align:left; padding:8px 10px; min-height:32px; }
     `;
     document.head.append(style);
-    const menu = document.createElement('details');
+    // Recent Web releases already supply a menu, including project/file hosts
+    // populated by the Synth. Move it into the desktop toolbar intact.
+    const existingMenu = document.getElementById('synthMenu');
+    const menu = existingMenu || document.createElement('details');
     menu.id = 'synthMenu'; menu.className = 'synth-menu';
-    menu.innerHTML = `<summary id="synthMenuButton" class="synth-icon-button" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="synthMenuPanel">
+    if (!existingMenu) menu.innerHTML = `<summary id="synthMenuButton" class="synth-icon-button" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="synthMenuPanel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </summary><div id="synthMenuPanel" class="synth-menu-panel"></div>`;
     pin.classList.add('synth-icon-button');
