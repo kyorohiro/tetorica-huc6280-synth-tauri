@@ -3,9 +3,9 @@
 import {Ym2612VGM, rawCommandLength} from '../js/ym2612vgm.js';
 import {parseVgmMetadata} from '../js/vgm_file.js';
 import {HUC6280_CLOCK} from '../js/huc6280synth.js';
-import {createDefaultPreset, readPreset} from './preset.js';
-import {extractVgmDacStreams} from './vgm_dac.js';
-import {extractVgmDirectPcm} from './vgm_direct_pcm.js';
+import {createDefaultPreset, readPreset} from './preset.js?v=wave-held-1';
+import {extractVgmDacStreams} from './vgm_dac.js?v=wave-held-1';
+import {extractVgmDirectPcm} from './vgm_direct_pcm.js?v=wave-held-1';
 import {MAX_DDA_SAMPLES} from './dda_pcm.js';
 
 export const MAX_VGM_BYTES = 64 * 1024 * 1024;
@@ -43,7 +43,8 @@ async function decode(source, signal) {
  * firstTime is in VGM's 44,100-sample timebase; channels are one-based CH1–CH6.
  * Wave RAM is never guessed from reset defaults or an unknown playback index.
  */
-export async function extractVgmInstruments(source, {signal} = {}) {
+export async function extractVgmInstruments(source, {signal,allowEmpty=false} = {}) {
+  if(typeof allowEmpty!=='boolean')throw new TypeError('allowEmpty must be boolean');
   let bytes = await decode(source, signal); abort(signal);
   if (bytes.length < 0x40) throw new Error('Truncated VGM header');
   let view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -350,7 +351,7 @@ export async function extractVgmInstruments(source, {signal} = {}) {
     }
   }
   abort(signal);
-  if (!voices.length) {
+  if (!voices.length&&!allowEmpty) {
     const reasons = [...warnings].filter(message => /omitted|unknown|DAC streams/i.test(message));
     const error = new Error(`No complete, audible HuC6280 Wave / Noise / LFO / PCM voices found in this VGM.${reasons.length ? ' ' + reasons.join(' ') : ''}`);
     error.warnings = [...warnings];

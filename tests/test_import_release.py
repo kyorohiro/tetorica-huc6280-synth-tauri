@@ -47,7 +47,52 @@ def write_archive(path, files):
             output.writestr(name, data)
 
 
+def cd_release_files():
+    files = release_files()
+    receipt = json.loads(files['sources/huc6280-synth-browser.json'])
+    name = 'js/cdda_worklet.js'
+    files[name] = b'// CD audio worklet'
+    module = {'path': name, 'sourcePath': 'docs/' + name,
+              'bytes': len(files[name]), 'sha256': importer.digest(files[name]),
+              'localImports': ['../generated/cdda_wasm.js?v=1']}
+    receipt['bundles'].append(module.copy())
+    receipt['modules'].append(module.copy())
+    receipt['originalInputs'].append({**module, 'path': module['sourcePath']})
+    receipt['runtimeArtifacts'] = []
+    for name, data in [('generated/cdda_wasm.js', b'// CD factory'),
+                       ('generated/cdda_wasm.wasm', b'\x00asm\x01\x00\x00\x00')]:
+        files[name] = data
+        receipt['runtimeArtifacts'].append({'path': name, 'bytes': len(data), 'sha256': importer.digest(data)})
+    files['sources/huc6280-synth-browser.json'] = json.dumps(receipt).encode()
+    return files
+
+
 class ImportTests(unittest.TestCase):
+    def test_additional_worklet_entries_and_recorded_runtime_are_accepted(self):
+        files = cd_release_files()
+        self.assertEqual(self.unpack(files), {name: importer.digest(data) for name, data in files.items()})
+
+    def test_additional_entries_and_runtime_remain_fully_verified(self):
+        for name in ['js/cdda_worklet.js', 'generated/cdda_wasm.js', 'generated/cdda_wasm.wasm']:
+            for change in ['modify', 'delete']:
+                files = cd_release_files()
+                if change == 'modify':
+                    files[name] = b'tampered'
+                else:
+                    del files[name]
+                with self.subTest(name=name, change=change), self.assertRaises(ValueError):
+                    self.unpack(files)
+        for field, omitted in [('bundles', 'synth-huc6280/synth.js'),
+                               ('modules', 'js/cdda_worklet.js'),
+                               ('runtimeArtifacts', 'generated/cdda_wasm.js'),
+                               ('runtimeArtifacts', 'generated/cdda_wasm.wasm')]:
+            files = cd_release_files()
+            receipt = json.loads(files['sources/huc6280-synth-browser.json'])
+            receipt[field] = [item for item in receipt[field] if item['path'] != omitted]
+            files['sources/huc6280-synth-browser.json'] = json.dumps(receipt).encode()
+            with self.subTest(field=field, omitted=omitted), self.assertRaises(ValueError):
+                self.unpack(files)
+
     def test_new_zip_updates_without_version_and_preserves_label_for_same_zip(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

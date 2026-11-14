@@ -10,7 +10,7 @@
   <title>Tetorica HuC6280 Synth</title>
   <link rel="icon" type="image/webp" href="./tetorica_huc6280_synth.webp">
   <link rel="apple-touch-icon" href="./tetorica_huc6280_synth.webp">
-  <link rel="stylesheet" href="./synth-huc6280/synth.css">
+  <link rel="stylesheet" href="./synth-huc6280/synth.css?v=huc-channel-ui-1">
 </head>
 <body>
   <main>
@@ -37,8 +37,16 @@
         </div>
         <div class="audio-toolbar">
           <div class="transport-actions">
+            <details id="synthMenu" class="synth-menu">
+              <summary id="synthMenuButton" class="synth-icon-button" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="synthMenuPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary>
+              <div id="synthMenuPanel" class="synth-menu-panel">
+                <section class="synth-menu-section"><h2>Import</h2><div class="synth-menu-actions"><button id="loadVgm" type="button" data-close-synth-menu>VGM / VGZ…</button><input id="vgmFileInput" class="file-input" type="file" accept=".vgm,.vgz,application/gzip,application/octet-stream" aria-label="Choose a VGM or VGZ file with HuC6280 sound"><div id="hucMenuProjectImport"></div><div id="hucMenuFilesImport"></div></div></section>
+                <section class="synth-menu-section"><h2>Export</h2><div class="synth-menu-actions"><div id="hucMenuProjectExport"></div><div id="hucMenuFileExport"></div></div></section>
+              </div>
+            </details>
             <button id="startAudio" class="primary" type="button">Enable audio</button>
             <button id="stopAudio" type="button">Stop all sound</button>
+            <button id="hucFilesToggle" type="button" aria-expanded="false" aria-controls="hucFilesPanel">Files</button>
           </div>
           <label class="master-control" for="masterVolume"><span>Master</span>
             <input id="masterVolume" type="range" min="0" max="3.8" step="0.01" value="0.7" aria-label="Master volume, 0 to 380 percent">
@@ -48,35 +56,41 @@
         <p id="audioStatus" class="audio-status" role="status" aria-live="polite">Enable audio, then play the keyboard. Editing does not start audio.</p>
       </header>
 
-      <section class="spu-monitor huc-monitor" aria-label="Instrument display">
-        <div class="visual-mode-controls" role="group" aria-label="Audio visualization">
-          <button type="button" data-visual-mode="waveform" aria-pressed="true">Waveform</button>
-          <button type="button" data-visual-mode="spectrum" aria-pressed="false">Spectrum</button>
+      <div id="synthWorkspace" class="spu-code-workspace huc-code-workspace">
+        <aside id="hucFilesPanel" class="spu-files-panel huc-files-panel" aria-label="Project files" hidden></aside>
+        <div id="hucSynthMain" class="spu-main huc-main" data-chip-view="huc6280">
+      <section id="hucSongPlayer" class="huc-song-player" aria-label="VGM reference playback" data-state="stopped">
+        <div class="huc-song-row">
+          <label for="hucSongSelect">VGM <select id="hucSongSelect" aria-label="Reference VGM song"><option value="">No VGM files</option></select></label>
+          <button id="hucSongPlayButton" class="primary" type="button" disabled>Play</button>
+          <button id="hucSongStopButton" type="button" disabled>Stop</button>
+          <output id="hucSongPosition" aria-label="Song position">0:00</output>
+          <details class="spu-code-help"><summary aria-label="About VGM reference playback">?</summary><p>Import a VGM / VGZ from Menu or add it to Files. The original file is kept under vgm/. Play runs one HuC6280 reference performance through Master; your edited instrument is kept. Code and song playback run one at a time. Pause stops at the heard position; Resume continues from there. Playback runs once. Drag the position bar and release to seek; Arrow keys and Home / End also work. Seek keeps Play / Pause and channel output switches, and refreshes the destination settings even with Auto update Off. From Stop it prepares the destination paused. Long seeks show preparation progress. Escape or Cancel seek keeps the previous position. While paused, choose a CH to edit and audition it individually, or Auto to play your common instrument. Edits stay on that CH when you switch views. Resume keeps the same song position and plays the queued audio first, then the updated settings. Copy to Auto keeps the song paused; Resume continues from the same position. While playing, choose a CH to edit its hardware or play keys into that channel; later VGM writes take over. Choose Auto to play or edit your common instrument without stopping the song. Loading another sound from a physical song CH still stops reference playback.</p><p>Seek cache retains a limited number of exact playback states in memory. Repeated moves can start nearby instead of rebuilding from the beginning. A different song or channel output setting clears these points. Stop keeps them; switching Cache off releases them. New points are collected while unedited playback or Seek advances. Manual changes are temporary: Seek restores the original VGM. Existing clean points remain available, but the edited run adds no new points. Cancelling Seek keeps the previous edited run.</p><button id="hucSongClearCache" type="button">Clear seek cache</button><p id="hucSongCacheStatus" class="subtext" role="status"></p></details>
         </div>
-        <p id="visualizerDescription">Live output after Master volume.</p>
-        <div class="monitor-body">
-          <div class="monitor-plot">
-            <canvas id="outputCanvas" width="900" height="220" role="img" aria-label="Live HuC6280 audio visualization"></canvas>
-          </div>
-          <label class="monitor-pitch" for="pitchBend" title="Software pitch bend, ±2 semitones. Release to return to center. Noise does not follow note pitch.">
-            <span>Pitch</span>
-            <input id="pitchBend" type="range" min="-2" max="2" step="0.01" value="0" orient="vertical" aria-label="Display pitch bend, minus two to plus two semitones">
-            <output id="pitchValue" for="pitchBend">0.00</output>
-          </label>
+        <div class="huc-song-seek">
+          <input id="hucSongSeek" type="range" min="0" max="0" step="0.01" value="0" aria-label="VGM song position in seconds" disabled>
+          <output id="hucSongSeekPosition" for="hucSongSeek">0:00.00</output>
+          <button id="hucSongCancelSeek" type="button" hidden>Cancel seek</button>
+          <label class="huc-song-cache-toggle"><input id="hucSongCacheEnabled" type="checkbox" checked>Cache</label>
         </div>
+        <p id="hucSongStatus" class="subtext" role="status">Add a VGM / VGZ to hear a reference performance.</p>
       </section>
-
-      <details id="vgmImport" class="huc-card huc-vgm-import" open>
+      <details id="vgmImport" class="huc-card huc-vgm-import">
         <summary>Sounds from VGM</summary>
         <div class="huc-card-content">
           <div class="huc-vgm-actions">
-            <button id="loadVgm" type="button">Load VGM / VGZ…</button>
-            <input id="vgmFileInput" class="file-input" type="file" accept=".vgm,.vgz,application/gzip,application/octet-stream" aria-label="Choose a VGM or VGZ file with HuC6280 sound">
             <button id="cancelVgm" type="button" hidden>Cancel import</button>
-            <p id="vgmStatus" class="subtext" role="status" aria-live="polite">Choose a PC Engine VGM, then select a Wave, Noise, LFO or PCM sound to play.</p>
+            <p id="vgmStatus" class="subtext" role="status" aria-live="polite">Import a VGM from Menu, then choose a sound.</p>
           </div>
-          <label class="huc-vgm-option"><input id="vgmKeepLoudestPcm" type="checkbox">Wave / PCM: keep loudest volume variant</label>
-          <p class="subtext">Groups Wave or PCM sounds with identical data and settings, keeping the highest channel volume. Turn off to show every volume variant.</p>
+          <div class="huc-vgm-option-row">
+            <label class="huc-vgm-option"><input id="vgmKeepLoudestPcm" type="checkbox" checked>Wave / PCM: keep loudest volume variant</label>
+            <details id="hucVgmImportHelp" class="spu-code-help huc-inline-help"><summary aria-label="About sounds from VGM">?</summary>
+              <p class="subtext">Groups Wave or PCM sounds with identical data and settings, keeping the highest channel volume. Turn off to show every volume variant. Import saves grouped sounds to Files/presets/&lt;song&gt;/. This switch changes the library list; saved presets stay grouped.</p>
+              <p class="subtext">Opening a file keeps the current instrument. Select a sound to load it, then edit its settings or save a preset. Software Envelope is off for imported sounds.</p>
+              <p class="subtext">Imports recorded Wave / Noise settings, complete CH1 + CH2 LFO pairs, supported PCM DAC streams and uniform direct DAC intervals with known boundaries. C4 plays the recorded LFO carrier pitch or PCM rate; LFO CH2 keeps its original period. Direct DAC imports are one-shots; Loop and the original note pitch are not inferred. Song timing, elapsed phase and later software envelopes are not replayed. Irregular or incomplete DAC intervals, unsupported streams and unknown settings are omitted with an explanation.</p>
+            <p id="vgmWarnings" class="subtext huc-vgm-warnings" hidden></p>
+            </details>
+          </div>
           <div id="vgmLibrary" hidden>
             <div class="huc-vgm-actions"><strong id="vgmFileName"></strong><button id="closeVgm" type="button">Close library</button></div>
             <div class="huc-vgm-filters" role="group" aria-label="Filter VGM sounds">
@@ -90,19 +104,71 @@
             <div class="huc-vgm-actions">
               <button id="vgmPrevious" type="button">Previous</button><span id="vgmPage" class="subtext"></span><button id="vgmNext" type="button">Next</button>
             </div>
-            <p id="vgmWarnings" class="subtext huc-vgm-warnings" hidden></p>
           </div>
-          <p class="subtext">Opening a file keeps the current instrument. Select a sound to load it, then edit its settings or save a preset. Software Envelope is off for imported sounds.</p>
-          <p class="subtext">Imports recorded Wave / Noise settings, complete CH1 + CH2 LFO pairs, supported PCM DAC streams and uniform direct DAC intervals with known boundaries. C4 plays the recorded LFO carrier pitch or PCM rate; LFO CH2 keeps its original period. Direct DAC imports are one-shots; Loop and the original note pitch are not inferred. Song timing, elapsed phase and later software envelopes are not replayed. Irregular or incomplete DAC intervals, unsupported streams and unknown settings are omitted with an explanation.</p>
         </div>
       </details>
 
+      <div class="huc-chip-tabs" role="tablist" aria-label="PC Engine sound sources">
+        <button id="huc6280ChipTab" type="button" role="tab" data-huc-chip-tab="huc6280" aria-controls="huc6280ChipPanel" aria-selected="true">HuC6280</button>
+        <button id="msm5205ChipTab" type="button" role="tab" data-huc-chip-tab="msm5205" aria-controls="msm5205ChipPanel" aria-selected="false" tabindex="-1">MSM5205</button>
+        <button id="cddaChipTab" type="button" role="tab" data-huc-chip-tab="cdda" aria-controls="cddaChipPanel" aria-selected="false" tabindex="-1">CD-DA</button>
+        <button id="mixerChipTab" type="button" role="tab" data-huc-chip-tab="mixer" aria-controls="mixerChipPanel" aria-selected="false" tabindex="-1">Mixer</button>
+      </div>
+
+      <section id="hucCodeLiveTools" class="spu-code-live-tools huc-channel-controls" aria-label="HuC6280 channel controls">
+        <div class="spu-code-live-row">
+          <select id="hucChannelSelect" aria-label="Auto or physical channel" hidden aria-hidden="true" tabindex="-1"><option value="synth" selected>Auto</option><option value="0">CH 1</option><option value="1">CH 2</option><option value="2">CH 3</option><option value="3">CH 4</option><option value="4">CH 5</option><option value="5">CH 6</option></select>
+          <div id="hucChannelTabs" class="huc-channel-tabs" role="tablist" aria-label="HuC6280 keyboard and parameter channel">
+            <button id="hucChannelAutoTab" type="button" role="tab" data-huc-channel="synth" aria-selected="true" aria-controls="voiceEditor">Auto</button>
+            <button id="hucChannel1Tab" type="button" role="tab" data-huc-channel="0" aria-selected="false" aria-controls="voiceEditor" tabindex="-1">CH1</button>
+            <button id="hucChannel2Tab" type="button" role="tab" data-huc-channel="1" aria-selected="false" aria-controls="voiceEditor" tabindex="-1">CH2</button>
+            <button id="hucChannel3Tab" type="button" role="tab" data-huc-channel="2" aria-selected="false" aria-controls="voiceEditor" tabindex="-1">CH3</button>
+            <button id="hucChannel4Tab" type="button" role="tab" data-huc-channel="3" aria-selected="false" aria-controls="voiceEditor" tabindex="-1">CH4</button>
+            <button id="hucChannel5Tab" type="button" role="tab" data-huc-channel="4" aria-selected="false" aria-controls="voiceEditor" tabindex="-1">CH5</button>
+            <button id="hucChannel6Tab" type="button" role="tab" data-huc-channel="5" aria-selected="false" aria-controls="voiceEditor" tabindex="-1">CH6</button>
+          </div>
+          <label><input id="hucLiveEnabled" type="checkbox" checked>Auto update</label>
+          <button id="hucSongCaptureButton" type="button" disabled hidden>Copy to Auto</button>
+          <button id="hucSaveSelectedPreset" type="button" disabled>Save to presets</button>
+          <details id="hucChannelHelp" class="spu-code-help huc-inline-help"><summary aria-label="About channel controls">?</summary><p>Auto edits your common instrument and allocates keyboard notes by round robin. A physical CH uses its own settings and keyboard voice in normal and Code modes. Choosing a view alone never copies settings to other channels. During VGM playback, CH1–CH6 edit hardware and use keys on that same reference chip. Already-generated audio is kept, and the controls follow the heard position. Software Envelope and PCM assets belong to Auto. DDA level and balance are editable, but its transient DAC value is not a keyboard sample; Pause freezes the song position while the selected CH remains individually editable. The keyboard auditions its known Wave, Noise or CH1 LFO pair through the same Master. Copy to Auto copies that configured sound into Auto, keeping the song paused. Save to presets stores the selected sound under Files/presets/ without changing the current view or song position. A transient DDA value or unknown Wave RAM cannot be saved as a playable sound. Auto update follows at up to 20 times per second, and Off retains the last observation. Manual edits still get one update when their audio boundary is heard. Unknown Wave RAM stays blank; DDA shows the last recorded DAC code. These are sent settings, not oscillator-phase readback. Hardware LFO connects CH2 to CH1; Noise uses CH5 / CH6.</p><p id="hucChannelReadout" class="subtext"></p><p id="hucSongCaptureInfo" class="subtext"></p></details>
+        </div>
+        <p id="hucChannelStatus" class="subtext" role="status"></p>
+        <p id="hucSongCaptureStatus" class="subtext" role="status" hidden></p>
+      </section>
+      <div id="msm5205ChannelTools" class="huc-single-channel-controls" data-huc-channel-tools="msm5205" hidden>
+        <div class="huc-channel-tabs" role="tablist" aria-label="MSM5205 channel"><button id="msm5205ChannelTab" type="button" role="tab" aria-selected="true" aria-controls="msm5205Controls" data-huc-single-channel>CH1</button></div>
+      </div>
+      <div id="cddaChannelTools" class="huc-single-channel-controls" data-huc-channel-tools="cdda" hidden>
+        <div class="huc-channel-tabs" role="tablist" aria-label="CD-DA output"><button id="cddaChannelTab" type="button" role="tab" aria-selected="true" aria-controls="cddaControls" data-huc-single-channel>Stereo</button></div>
+      </div>
+
+      <section class="spu-monitor huc-monitor" aria-label="Instrument display">
+        <div class="visual-mode-controls" role="group" aria-label="Audio visualization">
+          <button type="button" data-visual-mode="waveform" aria-pressed="true">Waveform</button>
+          <button type="button" data-visual-mode="spectrum" aria-pressed="false">Spectrum</button>
+        </div>
+        <p id="visualizerDescription">Live output after Master volume.</p>
+        <div class="monitor-body">
+          <div class="monitor-plot">
+            <canvas id="outputCanvas" width="900" height="220" role="img" aria-label="Live PC Engine mixed audio visualization"></canvas>
+          </div>
+          <label class="monitor-pitch" for="pitchBend" title="Software pitch bend, ±2 semitones. Release to return to center. Noise does not follow note pitch.">
+            <span>Pitch</span>
+            <input id="pitchBend" type="range" min="-2" max="2" step="0.01" value="0" orient="vertical" aria-label="Display pitch bend, minus two to plus two semitones">
+            <output id="pitchValue" for="pitchBend">0.00</output>
+          </label>
+        </div>
+      </section>
+
+      <div id="huc6280ChipPanel" role="tabpanel" aria-labelledby="huc6280ChipTab" data-huc-chip-panel="huc6280">
       <section class="instrument-workspace huc-workspace" aria-label="Instrument editor">
         <div class="section-heading"><h2>Sound source</h2><p id="voiceCapacity" role="status">Wavetable · 6 voices · round robin</p></div>
-        <div id="voiceEditor"></div>
+        <div id="voiceEditor" role="tabpanel" aria-labelledby="hucChannelAutoTab"></div>
       </section>
 
       <section class="instrument-toolbar" aria-label="Instrument files">
+        <label class="instrument-preset-control" for="hucPresetSelect">Preset <select id="hucPresetSelect" aria-label="HuC6280 presets in Files"><option value="">No playable presets</option></select></label>
+        <button id="saveSoundToFiles" type="button">Save to Files</button>
         <label class="instrument-name-control" for="instrumentName">Instrument name <input id="instrumentName" type="text" maxlength="80" value="Sine" autocomplete="off"></label>
         <div class="preset-actions">
           <button id="loadPreset" type="button">Load preset…</button>
@@ -114,8 +180,91 @@
         <textarea id="codeOutput" readonly spellcheck="false" rows="8" aria-label="Generated instrument JavaScript" hidden></textarea>
       </section>
 
-      <section class="keyboard-section" aria-labelledby="keyboardHeading">
-        <div class="section-heading"><h2 id="keyboardHeading">Keyboard</h2><p>Every key plays the selected source. No keyboard split.</p></div>
+      </div>
+      <section id="msm5205ChipPanel" class="huc-msm-panel" role="tabpanel" aria-labelledby="msm5205ChipTab" data-huc-chip-panel="msm5205" hidden>
+        <div id="msm5205Controls" role="tabpanel" aria-labelledby="msm5205ChannelTab">
+          <div class="section-heading"><h2>MSM5205 ADPCM</h2><output id="msmSourceState" role="status">Empty</output></div>
+          <p class="huc-help">PC Engine-style sample player · software transport controls</p>
+          <div class="huc-msm-files">
+            <label for="msmSampleSelect">Sample in Files <select id="msmSampleSelect"><option value="">No WAV / ADPCM files</option></select></label>
+            <label for="msmSampleFormat">Load as <select id="msmSampleFormat"><option value="wav">WAV → ADPCM</option><option value="adpcm">Packed ADPCM</option></select></label>
+            <button id="msmLoadSample" type="button" disabled>Load selected sample</button>
+            <button id="msmAddFiles" type="button">Add samples to Files…</button>
+            <button id="msmCancelLoad" type="button" hidden>Cancel load</button>
+          </div>
+          <p id="msmSampleInfo" class="subtext">No sample loaded · choose a WAV or packed ADPCM file from Files.</p>
+          <progress id="msmSampleCapacity" value="0" max="65536" aria-label="ADPCM sample memory used, maximum 64 KiB"></progress>
+          <p class="huc-help">Decoded ADPCM · mono</p>
+          <canvas id="msmSampleWave" width="900" height="180" role="img" aria-label="Actual decoded ADPCM sample waveform"></canvas>
+          <div class="huc-msm-transport">
+            <button id="msmPlay" class="primary" type="button" disabled>Play</button>
+            <button id="msmStop" type="button" disabled>Stop</button>
+            <label class="huc-check"><input id="msmLoop" type="checkbox">Loop</label>
+            <div class="huc-field"><span id="msmRateLabel">Rate · 0–15</span>
+              <div class="huc-stepper" role="group" aria-labelledby="msmRateLabel">
+                <button class="huc-stepper-button" data-msm-rate-delta="-1" type="button" aria-label="Decrease ADPCM Rate">−</button>
+                <output id="msmRate" class="huc-stepper-value" role="spinbutton" tabindex="0" aria-labelledby="msmRateLabel" aria-valuemin="0" aria-valuemax="15" aria-valuenow="12">12</output>
+                <button class="huc-stepper-button" data-msm-rate-delta="1" type="button" aria-label="Increase ADPCM Rate">+</button>
+              </div><output id="msmRateHz" for="msmRate">8,000 Hz</output>
+            </div>
+          </div>
+          <p id="msmNextPlayHint" class="huc-help">Rate and Loop apply on the next Play. Replay starts from the beginning.</p>
+          <p id="msmSourceStatus" class="huc-help" role="status"></p>
+          <details class="spu-code-help"><summary aria-label="About MSM5205 sample playback">?</summary><p>This is your authored sample, shared with <code>await useSoundChip("msm5205")</code>. VGM playback has a separate reference decoder. WAV conversion is software: channels are mixed to mono, resampled at the selected Rate and encoded as four-bit ADPCM. Packed data uses the high nibble first and fits in 64 KiB. Rate changes playback speed and pitch together; Loop and Rate take effect at the next Play. Replacing a sample stops only this ADPCM player. Code loops and the HuC6280 continue. Code Stop keeps the loaded sample for another Play. Original files are saved in the project; the current ADPCM selection and playback settings are session state.</p></details>
+          <button type="button" data-add-cdrom2-examples>Add Code examples to Files</button>
+        </div>
+      </section>
+      <section id="cddaChipPanel" class="huc-cdda-panel" role="tabpanel" aria-labelledby="cddaChipTab" data-huc-chip-panel="cdda" hidden>
+        <div id="cddaControls" role="tabpanel" aria-labelledby="cddaChannelTab">
+          <div class="section-heading"><h2>CD-DA</h2><output id="cddaSourceState" role="status">Empty</output></div>
+          <p class="huc-help">Audio tracks · software transport · 44.1 kHz stereo PCM16 WAV</p>
+          <div class="huc-cdda-files">
+            <label for="cddaSourceSelect">Source in Files or session <select id="cddaSourceSelect"><option value="">No CD audio sources</option></select></label>
+            <button id="cddaLoadSource" type="button" disabled>Load selected source</button>
+            <button id="cddaAddFiles" type="button">Add to Files…</button>
+            <button id="cddaOpenSession" type="button">Open session WAVs…</button>
+            <input id="cddaSessionInput" class="file-input" type="file" accept=".wav,audio/wav,audio/x-wav" multiple aria-label="Open temporary session WAV tracks">
+            <button id="cddaClearSession" type="button" disabled>Clear session WAVs</button>
+            <button id="cddaCancelLoad" type="button" hidden>Cancel load</button>
+          </div>
+          <p id="cddaStorageNote" class="huc-help cdda-storage-note">Project Files / Cassette: 16 MiB total. Open session WAVs for longer audio; session audio is not saved or exported with the Project.</p>
+          <div class="huc-cdda-transport">
+            <label for="cddaTrackSelect">Track <select id="cddaTrackSelect" aria-label="Selected CD-DA track" disabled></select></label>
+            <button id="cddaPlay" class="primary" type="button" disabled>Play</button>
+            <button id="cddaStop" type="button" disabled>Stop</button>
+          </div>
+          <div class="huc-cdda-seek"><input id="cddaSeek" type="range" min="0" max="0" step="0.01" value="0" aria-label="CD-DA playback position in seconds" disabled><output id="cddaPosition" for="cddaSeek">0:00.00 / 0:00.00</output></div>
+          <p id="cddaSourceInfo" class="huc-help">Choose a 44.1 kHz stereo PCM16 WAV or a track manifest, then Load.</p>
+          <p id="cddaSourceStatus" class="huc-help" role="status"></p>
+          <details class="spu-code-help"><summary aria-label="About CD audio tracks and storage">?</summary><p>This authored CD-DA source is shared with <code>await useSoundChip("cdda")</code>. UI and Code use the same track and cursor. Code Stop keeps the source and rewinds it. Project Files and Cassette exports retain their 16 MiB total budget. Open session WAVs keeps local File references outside Project storage: they are not saved, exported or recovered on reload. Reopen the original WAVs to use them again. Up to 99 session files / 512 MiB total; one track contains at most 256 MiB of PCM. Only the selected track is read. Track manifests use <code>{"tracks":[{"number":3,"file":"song.wav","title":"Song"}]}</code>; file paths are relative to the manifest. CD-DA is separate from VGM and this does not open a game disc, ISO or CUE. Compressed audio, rate conversion and pitched keyboard playback are outside this player.</p></details>
+          <button type="button" data-add-cdrom2-examples>Add Code examples to Files</button>
+        </div>
+      </section>
+      <section id="mixerChipPanel" class="huc-source-mixer" role="tabpanel" aria-labelledby="mixerChipTab" data-huc-chip-panel="mixer" hidden>
+        <h2>Mixer</h2><div id="hucSourceMixer"></div>
+        <div id="hucSongChannels" class="huc-song-channels" role="group" aria-label="VGM channel outputs" hidden>
+          <span class="huc-song-channels-label">VGM output</span>
+          <button id="hucSongChannel1Toggle" type="button" aria-pressed="true" aria-label="VGM CH 1 output" title="Toggle VGM CH 1 output">CH 1 · On</button>
+          <button id="hucSongChannel2Toggle" type="button" aria-pressed="true" aria-label="VGM CH 2 output" title="Toggle VGM CH 2 output">CH 2 · On</button>
+          <button id="hucSongChannel3Toggle" type="button" aria-pressed="true" aria-label="VGM CH 3 output" title="Toggle VGM CH 3 output">CH 3 · On</button>
+          <button id="hucSongChannel4Toggle" type="button" aria-pressed="true" aria-label="VGM CH 4 output" title="Toggle VGM CH 4 output">CH 4 · On</button>
+          <button id="hucSongChannel5Toggle" type="button" aria-pressed="true" aria-label="VGM CH 5 output" title="Toggle VGM CH 5 output">CH 5 · On</button>
+          <button id="hucSongChannel6Toggle" type="button" aria-pressed="true" aria-label="VGM CH 6 output" title="Toggle VGM CH 6 output">CH 6 · On</button>
+          <details class="spu-code-help"><summary aria-label="About VGM channel outputs">?</summary><p>These software listening switches change only a channel's contribution to VGM song output. Wave, Noise, DDA and CH2 → CH1 hardware LFO keep running; Live and Capture still show the recorded settings. Already buffered audio plays first, then the new mix is heard. These switches keep their settings across Pause, Stop and song changes. Keyboard and Code output are separate.</p></details>
+        </div>
+        <details class="spu-code-help"><summary aria-label="About source mixer">?</summary><p>One session mix for Keyboard, Code and VGM. Levels use the same calibrated source gains as Playground; Reset returns those defaults. Master controls the final combined output. VGM changes follow already-rendered audio and invalidate affected Seek checkpoints. CD-DA is a separate authored audio-track source, shared by its UI and Code.</p></details>
+      </section>
+
+      <section id="synthInputSection" class="keyboard-section spu-input-section" aria-labelledby="keyboardHeading" data-input-mode="keyboard">
+        <h2 id="keyboardHeading" class="spu-sr-only">Performance input</h2>
+        <div class="spu-input-tabs" role="tablist" aria-label="Performance input">
+          <button id="synthInputKeyboardTab" type="button" role="tab" aria-selected="true" aria-controls="synthKeyboardPanel">Keyboard</button>
+          <button id="synthInputCodeTab" type="button" role="tab" aria-selected="false" aria-controls="synthCodePanel" tabindex="-1">Code</button>
+          <button id="synthCodeExpandButton" class="spu-code-expand" type="button" aria-label="Maximize Code" aria-pressed="false" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path id="synthCodeExpandIcon" d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+        </div>
+        <div id="synthKeyboardPanel" role="tabpanel" aria-labelledby="synthInputKeyboardTab">
+        <p id="hucKeyboardHint" class="subtext">Every key plays the selected source. No keyboard split.</p>
+        <div id="hucKeyboardControls">
         <div class="keyboard-toolbar">
           <div class="octave-control" role="group" aria-label="Keyboard octave">
             <button id="octaveDown" type="button" aria-label="Lower keyboard by one octave">−</button>
@@ -133,14 +282,29 @@
           </label>
           <div id="keyboard" class="keyboard-mount"></div>
         </div>
+        </div>
+        </div>
+        <div id="synthCodePanel" class="spu-code-panel" role="tabpanel" aria-labelledby="synthInputCodeTab" hidden>
+          <div class="spu-code-toolbar"><button id="synthCodeRunButton" class="primary" type="button">Run</button><button id="synthCodeApplyButton" type="button" disabled>Apply</button><button id="synthCodeStopButton" type="button" disabled>Stop</button><span id="synthCodeState" role="status">Idle</span></div>
+          <p class="huc-help spu-code-caption">Software performance · HuC6280 / MSM5205 / CD-DA share this output. Run: Ctrl/Cmd+Enter · Apply: Ctrl/Cmd+Shift+Enter.</p>
+          <div id="synthCodeEditorHost" class="spu-code-editor-host"></div>
+          <textarea id="synthCodeEditor" class="spu-code-editor" spellcheck="false" aria-label="HuC6280 performance JavaScript" rows="12" readonly></textarea>
+          <p id="synthCodeEditorNote" class="huc-help">Code is saved in Files. Loading a project never runs it automatically.</p>
+          <pre id="synthCodeError" class="spu-code-error" role="alert"></pre>
+          <details class="spu-code-console"><summary>Console</summary><pre id="synthCodeLog" aria-live="polite"></pre></details>
+          <details class="spu-code-help"><summary aria-label="About HuC6280 Code">?</summary><p>Use <code>await useSoundChip("huc6280")</code>, <code>"msm5205"</code> or <code>"cdda"</code> and await its methods. MSM5205 plays ADPCM samples; CD-DA shares its transport with the CD-DA tab, using stereo PCM16 / 44.1 kHz WAV tracks or manifests. Session WAVs are outside Project exports. The Mixer applies to all three sources. CH1–CH6 share one PSG. Hardware LFO connects CH2 to CH1; Noise uses CH5 / CH6. noteOn / noteOff use the authored Software Envelope and DDA sample; keyOn / keyOff are raw hardware gates. Run starts fresh; Apply keeps context and named loops. Switching Keyboard / Code keeps the performance running. Typing in the editor changes code; click a control or the page background to play keys while Code stays visible. Stop fades the software output and restores your edited instrument. Wave uploads reset channel phase. Timing, envelope, DDA playback and liveFx are software features.</p></details>
+        </div>
       </section>
+        </div>
+        <div id="synthExpandedCodeSlot" class="spu-expanded-code" hidden></div>
+      </div>
       <footer>
-        <p>One HuC6280: six 32-sample, 5-bit wavetable / DAC channels. Noise uses CH5 / CH6. Hardware LFO connects CH2 to CH1; enabling it selects one carrier voice. DDA uses the chip’s five-bit DAC with software PCM supply, rate, pitch and Loop. Envelope, round robin and waveform drawing are software tools. CD-ROM² audio and song playback are not included.</p>
+        <p>HuC6280: six 32-sample, 5-bit wavetable / DAC channels. Noise uses CH5 / CH6. Hardware LFO connects CH2 to CH1; enabling it selects one carrier voice. DDA uses the chip’s five-bit DAC with software PCM supply, rate, pitch and Loop. Envelope, round robin and waveform drawing are software tools. VGM reference playback supports HuC6280 and MSM5205. Code can also load separate CD-DA tracks. MSM5205 plays authored ADPCM samples and CD-DA plays separate audio tracks; this does not run a CD-ROM² game or disc image.</p>
         <div><a href="https://kyorohiro.github.io/hello_ymfm_wasm/playground/index.html?mode=huc6280">Open Playground</a> · <a href="https://github.com/kyorohiro/hello_ymfm_wasm/blob/main/packages/fm2612/README.md#api-entry-points">API guide</a> · <a href="https://github.com/kyorohiro/hello_ymfm_wasm/blob/main/tetorica_src/runtime/huc6280synth.js">JavaScript source</a></div>
       </footer>
     </article>
     <noscript><p class="noscript-message">Enable JavaScript to play this synthesizer.</p></noscript>
   </main>
-  <script type="module" src="./synth-huc6280/synth.js"></script>
+  <script type="module" src="./synth-huc6280/synth.js?v=huc-channel-ui-1"></script>
 </body>
 </html>

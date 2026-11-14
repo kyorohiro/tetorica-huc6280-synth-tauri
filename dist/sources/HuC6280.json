@@ -4,19 +4,47 @@
   "sdk": {
     "schemaVersion": 1,
     "name": "tetorica-soundchip-native",
-    "version": "0.1.7",
+    "version": "0.1.8-huc-state",
     "sourceCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
-    "archiveName": "tetorica-soundchip-native-0.1.7-sources.zip",
-    "archiveSha256": "5f7cdf35bc85a7453eef42576259f615411d4fdcdd47b8778242eb2a2d7f2b9c",
-    "manifestSha256": "b5e4c75230c32c66aa2ba4248830af7e7587a5977529973c346063afd2d2f365",
-    "fileCount": 476,
-    "unpublished": true
+    "archiveName": "tetorica-soundchip-native-0.1.8-huc-state-sources.zip",
+    "archiveSha256": "7fdb39e2c648ea1498279134560579ead409ab302f36d8c9ae7a61d8c4aa712d",
+    "manifestSha256": "e839739e9e7afc68003edc9c81d90535a2f949f6ab6c886dfe9059cf434be31d",
+    "fileCount": 481,
+    "unpublished": true,
+    "localCandidate": {
+      "baseCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
+      "changedPaths": [
+        "CHANGELOG.md",
+        "CMakeLists.txt",
+        "catalog/chips.json",
+        "catalog/native_inventory.json",
+        "catalog/source_inventory.json",
+        "docs/huc6280-local-candidate.json",
+        "docs/huc6280-state.md",
+        "native/CMakeLists.txt",
+        "native/include/tetorica/huc6280.hpp",
+        "native/include/tetorica/huc6280_state.h",
+        "native/tests/huc6280_state_fixture.cpp",
+        "scripts/build_huc6280_wasm.sh",
+        "sdk.json",
+        "tests/huc6280_state_wasm_smoke.mjs",
+        "vendor/mame-huc6280/README.md",
+        "vendor/mame-huc6280/huc6280.cpp",
+        "vendor/mame-huc6280/huc6280.h",
+        "wasm/huc6280_wasm.cpp"
+      ]
+    }
   },
   "build": {
     "id": "huc6280",
     "format": "emscripten-es-module",
-    "sourceFingerprint": "f1aadf4cefd8ad266fed96082e7515ee341b37b1e99f038f649d88a3e17b8487",
+    "sourceFingerprint": "b4a9a1b82a55c636c9952abc604622652d63d1d5643fc08f04892ae349c11c59",
     "sourceFiles": [
+      {
+        "path": "native/include/tetorica/huc6280_state.h",
+        "sha256": "70c6ccc363e2f9dd52ecd47129ad7381f3afea87cc3d230a8d03a848af05a5df",
+        "size": 1344
+      },
       {
         "path": "scripts/build-wasm.sh",
         "sha256": "caf6bd1688d21b48cf5c633aac9aa9398ad727b8b5445fca7aa37718d7dca33f",
@@ -24,8 +52,8 @@
       },
       {
         "path": "scripts/build_huc6280_wasm.sh",
-        "sha256": "87a9ac5829a9eb139c50b5970bfb949ee71ab33908e5e76f4e9a21d2c516bd3d",
-        "size": 656
+        "sha256": "0be718f65bea6f3d46d432e25224448cd29783d496a8cc11308edb55cee59313",
+        "size": 765
       },
       {
         "path": "scripts/record_wasm_build.mjs",
@@ -34,13 +62,13 @@
       },
       {
         "path": "vendor/mame-huc6280/huc6280.cpp",
-        "sha256": "5693c83943957e2ee0ee1bd5045503034363fed282764f99acb907293222f26f",
-        "size": 6895
+        "sha256": "0249412639b309f13dbd285d729ff3141364fc2c9b499b8d7608a1f9a994e779",
+        "size": 13483
       },
       {
         "path": "vendor/mame-huc6280/huc6280.h",
-        "sha256": "6b1464fc6d56390e56f99bf072d7300126cc91cd317bacc78b43be4d552af2b6",
-        "size": 1056
+        "sha256": "d41035e4f0e62b331d9bc8998947bb78f5e17fc44bd9e6704ccc8dbf9c5b89cb",
+        "size": 1641
       },
       {
         "path": "vendor/mame-huc6280/upstream/c6280.cpp",
@@ -54,24 +82,24 @@
       },
       {
         "path": "wasm/huc6280_wasm.cpp",
-        "sha256": "89d1de8929f13e520a33f6993ebc56d46684d67e8ab6a6314346895574ff7765",
-        "size": 467
+        "sha256": "d4c68187010c833804b0c40799b0901f037bc75de0f15c45cf37e938505c3075",
+        "size": 1539
       }
     ],
     "outputs": [
       {
         "path": "huc6280_wasm.js",
-        "sha256": "81d317f4aac899c00c9a720ab72946c72dde155f9688cbed22b45cb3fb77804f",
-        "size": 13612
+        "sha256": "7786bb5620b24884aa2aba4d8078d5b480c03987ba2cce638fb3c3874a05cf45",
+        "size": 14044
       },
       {
         "path": "huc6280_wasm.wasm",
-        "sha256": "7df1e220f9e20eae024cc2035884326abece729f1c0bdb1a4a50022dc5a92073",
-        "size": 8935
+        "sha256": "35631309996a62c5c92241fe714c2d5a51330a29e9fc6a07871df090fd25d021",
+        "size": 11000
       }
     ],
     "compiler": {
-      "command": "em++",
+      "command": "/opt/homebrew/bin/em++",
       "version": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.6-git\nCopyright (C) 2026 the Emscripten authors (see AUTHORS.txt)\nThis is free and open source software under the MIT license.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
     },
     "verification": "compiled from the included source snapshot; runtime smoke is reported separately"
@@ -83,14 +111,24 @@
       "sha256": "d49c2f05a09d2d648c05a5af92240a5dc4059830bc29afbb8919c6d1ba76bf91"
     },
     {
+      "path": "sources/huc6280-sdk/docs/huc6280-state.md",
+      "bytes": 5048,
+      "sha256": "0f4f16048d039904d237fc5463c1d961cb2a09e9ed689c15cf77bf819ec1b92f"
+    },
+    {
+      "path": "sources/huc6280-sdk/native/include/tetorica/huc6280_state.h",
+      "bytes": 1344,
+      "sha256": "70c6ccc363e2f9dd52ecd47129ad7381f3afea87cc3d230a8d03a848af05a5df"
+    },
+    {
       "path": "sources/huc6280-sdk/scripts/build-wasm.sh",
       "bytes": 1696,
       "sha256": "caf6bd1688d21b48cf5c633aac9aa9398ad727b8b5445fca7aa37718d7dca33f"
     },
     {
       "path": "sources/huc6280-sdk/scripts/build_huc6280_wasm.sh",
-      "bytes": 656,
-      "sha256": "87a9ac5829a9eb139c50b5970bfb949ee71ab33908e5e76f4e9a21d2c516bd3d"
+      "bytes": 765,
+      "sha256": "0be718f65bea6f3d46d432e25224448cd29783d496a8cc11308edb55cee59313"
     },
     {
       "path": "sources/huc6280-sdk/scripts/record_wasm_build.mjs",
@@ -99,8 +137,8 @@
     },
     {
       "path": "sources/huc6280-sdk/sdk.json",
-      "bytes": 285,
-      "sha256": "236605758aca8e6dd7753094e64666c29b2bb112d2b5370588b54e69518112a7"
+      "bytes": 295,
+      "sha256": "4f1d607f69cd191c717f349c0df3df8e5f5da9fb16a014137966af5a70a2dcd5"
     },
     {
       "path": "sources/huc6280-sdk/vendor/mame-huc6280/LICENSE",
@@ -109,18 +147,18 @@
     },
     {
       "path": "sources/huc6280-sdk/vendor/mame-huc6280/README.md",
-      "bytes": 956,
-      "sha256": "1b792f719db680de5b5121ed2293256ac00fe6e51725e2aadc38dfaaa768b8dd"
+      "bytes": 1364,
+      "sha256": "8b5397ae03fe697a2bec11ba3d95f98eb16bb616d8da80c5ab1ac2fc1677f570"
     },
     {
       "path": "sources/huc6280-sdk/vendor/mame-huc6280/huc6280.cpp",
-      "bytes": 6895,
-      "sha256": "5693c83943957e2ee0ee1bd5045503034363fed282764f99acb907293222f26f"
+      "bytes": 13483,
+      "sha256": "0249412639b309f13dbd285d729ff3141364fc2c9b499b8d7608a1f9a994e779"
     },
     {
       "path": "sources/huc6280-sdk/vendor/mame-huc6280/huc6280.h",
-      "bytes": 1056,
-      "sha256": "6b1464fc6d56390e56f99bf072d7300126cc91cd317bacc78b43be4d552af2b6"
+      "bytes": 1641,
+      "sha256": "d41035e4f0e62b331d9bc8998947bb78f5e17fc44bd9e6704ccc8dbf9c5b89cb"
     },
     {
       "path": "sources/huc6280-sdk/vendor/mame-huc6280/upstream/c6280.cpp",
@@ -134,18 +172,18 @@
     },
     {
       "path": "sources/huc6280-sdk/wasm/huc6280_wasm.cpp",
-      "bytes": 467,
-      "sha256": "89d1de8929f13e520a33f6993ebc56d46684d67e8ab6a6314346895574ff7765"
+      "bytes": 1539,
+      "sha256": "d4c68187010c833804b0c40799b0901f037bc75de0f15c45cf37e938505c3075"
     }
   ],
   "generated": {
     "huc6280_wasm.js": {
-      "bytes": 13612,
-      "sha256": "81d317f4aac899c00c9a720ab72946c72dde155f9688cbed22b45cb3fb77804f"
+      "bytes": 14044,
+      "sha256": "7786bb5620b24884aa2aba4d8078d5b480c03987ba2cce638fb3c3874a05cf45"
     },
     "huc6280_wasm.wasm": {
-      "bytes": 8935,
-      "sha256": "7df1e220f9e20eae024cc2035884326abece729f1c0bdb1a4a50022dc5a92073"
+      "bytes": 11000,
+      "sha256": "35631309996a62c5c92241fe714c2d5a51330a29e9fc6a07871df090fd25d021"
     }
   }
 }

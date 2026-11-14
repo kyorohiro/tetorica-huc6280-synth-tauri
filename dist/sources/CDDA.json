@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "origin": "Fixed tetorica-soundchip-native application-audio module",
+  "sdk": {
+    "schemaVersion": 1,
+    "name": "tetorica-soundchip-native",
+    "version": "0.1.8-huc-state",
+    "sourceCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
+    "archiveName": "tetorica-soundchip-native-0.1.8-huc-state-sources.zip",
+    "archiveSha256": "7fdb39e2c648ea1498279134560579ead409ab302f36d8c9ae7a61d8c4aa712d",
+    "manifestSha256": "e839739e9e7afc68003edc9c81d90535a2f949f6ab6c886dfe9059cf434be31d",
+    "fileCount": 481,
+    "unpublished": true,
+    "localCandidate": {
+      "baseCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
+      "changedPaths": [
+        "CHANGELOG.md",
+        "CMakeLists.txt",
+        "catalog/chips.json",
+        "catalog/native_inventory.json",
+        "catalog/source_inventory.json",
+        "docs/huc6280-local-candidate.json",
+        "docs/huc6280-state.md",
+        "native/CMakeLists.txt",
+        "native/include/tetorica/huc6280.hpp",
+        "native/include/tetorica/huc6280_state.h",
+        "native/tests/huc6280_state_fixture.cpp",
+        "scripts/build_huc6280_wasm.sh",
+        "sdk.json",
+        "tests/huc6280_state_wasm_smoke.mjs",
+        "vendor/mame-huc6280/README.md",
+        "vendor/mame-huc6280/huc6280.cpp",
+        "vendor/mame-huc6280/huc6280.h",
+        "wasm/huc6280_wasm.cpp"
+      ]
+    }
+  },
+  "inputs": [
+    {
+      "path": "vendor/tetorica-cdda/cdda_pcm.c",
+      "size": 5021,
+      "sha256": "30a039d4ad991b36f1a3e72191a05dd71159139254fe6e59fa53dbeaf0a91ccb"
+    },
+    {
+      "path": "vendor/tetorica-cdda/cdda_pcm.h",
+      "size": 2890,
+      "sha256": "8e2c6c7f5aa517acdda18897ae980d2afd3d6cbde088d331c6cbcf0eea9a8cc6"
+    },
+    {
+      "path": "vendor/tetorica-cdda/LICENSE",
+      "size": 1517,
+      "sha256": "d49c2f05a09d2d648c05a5af92240a5dc4059830bc29afbb8919c6d1ba76bf91"
+    },
+    {
+      "path": "vendor/tetorica-cdda/NOTICE.md",
+      "size": 791,
+      "sha256": "32dd325f1ede34b3da8c72a7a2fd65d25fe4c645051788057e9c37d669ae634c"
+    },
+    {
+      "path": "wasm/cdda_wasm.c",
+      "size": 1954,
+      "sha256": "4c5fd81fcfd6d3785b44f939fdb14c71344d1e8b80c9668bf0cee7fc693fc012"
+    },
+    {
+      "path": "scripts/build_cdda_wasm.sh",
+      "size": 1555,
+      "sha256": "21ddd64e21865427b32d2d6faa43a0f79c3dd967839a8bc5b4090ee3bf3ad39f"
+    }
+  ],
+  "files": [
+    {
+      "path": "native/cdda/cdda_pcm.c",
+      "bytes": 5021,
+      "sha256": "30a039d4ad991b36f1a3e72191a05dd71159139254fe6e59fa53dbeaf0a91ccb"
+    },
+    {
+      "path": "native/cdda/cdda_pcm.h",
+      "bytes": 2890,
+      "sha256": "8e2c6c7f5aa517acdda18897ae980d2afd3d6cbde088d331c6cbcf0eea9a8cc6"
+    },
+    {
+      "path": "native/cdda/LICENSE",
+      "bytes": 1517,
+      "sha256": "d49c2f05a09d2d648c05a5af92240a5dc4059830bc29afbb8919c6d1ba76bf91"
+    },
+    {
+      "path": "native/cdda/NOTICE.md",
+      "bytes": 791,
+      "sha256": "32dd325f1ede34b3da8c72a7a2fd65d25fe4c645051788057e9c37d669ae634c"
+    },
+    {
+      "path": "native/cdda/cdda_wasm.c",
+      "bytes": 1954,
+      "sha256": "4c5fd81fcfd6d3785b44f939fdb14c71344d1e8b80c9668bf0cee7fc693fc012"
+    },
+    {
+      "path": "scripts/build_cdda_wasm.sh",
+      "bytes": 1544,
+      "sha256": "d602e36728f23c9a6ce674b02cde29a2b2c098e65366cea0083b8d3d6428e19b"
+    },
+    {
+      "path": "native/cdda/README.md",
+      "bytes": 1574,
+      "sha256": "0490e3c840d661063060b813192a86a14e709f1fdd305375734e66eb2c574e13"
+    },
+    {
+      "path": "CDDA.md",
+      "bytes": 1109,
+      "sha256": "433cd26bd31af8a6243ef97b1d750fa0a96f30b9d8d9af1c7bd4b477075cb003"
+    }
+  ],
+  "modifications": [
+    "Only source/include paths in scripts/build_cdda_wasm.sh relocate vendor/tetorica-cdda and wasm/cdda_wasm.c to native/cdda. Core, header, bridge, license and notice bytes are unchanged. Bundle README/guide and this receipt are generated."
+  ]
+}

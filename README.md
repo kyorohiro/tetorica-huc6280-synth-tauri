@@ -91,6 +91,19 @@ npm run import:release -- /path/to/tetorica_huc6280_synth_VERSION_itch.zip
 python3 scripts/import_release.py --check
 ```
 
+The optional `--version X.Y.Z` sets the **desktop app version**, independently
+of the Web ZIP filename/version. It synchronizes `package.json`,
+`package-lock.json`, `src-tauri/Cargo.toml`, `src-tauri/Cargo.lock` (only this
+app's crate), and `src-tauri/tauri.conf.json`; dependency versions stay pinned.
+Omit the flag to keep the current desktop version. The `release.lock.json`
+label/hash still describes the imported Web distribution.
+
+For example, append `--version 1.2.3` to the import command above. After checks,
+run the existing local `sh deploy_mac.sh` release build, review the final locks,
+and commit the imported `dist/`, receipt and changed metadata/locks together
+before creating the release tag. Importing alone does not build, commit or tag.
+
+
 The importer validates archive paths, product identity, readable-module receipts,
 the WASM / native-source receipts and required licenses before replacing `dist/`.
 Both `dist/` and `release.lock.json` belong in Git. `.gitattributes` preserves the

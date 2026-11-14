@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "origin": "Fixed tetorica-soundchip-native application-audio module",
+  "sdk": {
+    "schemaVersion": 1,
+    "name": "tetorica-soundchip-native",
+    "version": "0.1.8-huc-state",
+    "sourceCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
+    "archiveName": "tetorica-soundchip-native-0.1.8-huc-state-sources.zip",
+    "archiveSha256": "7fdb39e2c648ea1498279134560579ead409ab302f36d8c9ae7a61d8c4aa712d",
+    "manifestSha256": "e839739e9e7afc68003edc9c81d90535a2f949f6ab6c886dfe9059cf434be31d",
+    "fileCount": 481,
+    "unpublished": true,
+    "localCandidate": {
+      "baseCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
+      "changedPaths": [
+        "CHANGELOG.md",
+        "CMakeLists.txt",
+        "catalog/chips.json",
+        "catalog/native_inventory.json",
+        "catalog/source_inventory.json",
+        "docs/huc6280-local-candidate.json",
+        "docs/huc6280-state.md",
+        "native/CMakeLists.txt",
+        "native/include/tetorica/huc6280.hpp",
+        "native/include/tetorica/huc6280_state.h",
+        "native/tests/huc6280_state_fixture.cpp",
+        "scripts/build_huc6280_wasm.sh",
+        "sdk.json",
+        "tests/huc6280_state_wasm_smoke.mjs",
+        "vendor/mame-huc6280/README.md",
+        "vendor/mame-huc6280/huc6280.cpp",
+        "vendor/mame-huc6280/huc6280.h",
+        "wasm/huc6280_wasm.cpp"
+      ]
+    }
+  },
+  "inputs": [
+    {
+      "path": "vendor/tetorica-msm5205/msm5205_pcm.c",
+      "size": 6720,
+      "sha256": "2554a3c98f3d4de6886e61bbd805451247214c38f18069a97f2796dbbbd9f5be"
+    },
+    {
+      "path": "vendor/tetorica-msm5205/msm5205_pcm.h",
+      "size": 3618,
+      "sha256": "aa80487e6bc5b6c79f08ba45dbbf4e475e65dcc7c7c1399de354d743211fbee9"
+    },
+    {
+      "path": "vendor/tetorica-msm5205/LICENSE",
+      "size": 1617,
+      "sha256": "38607b04a502faeb382f075f8cf3c83eb5e0232b97fd5ec24f76a30875765a5a"
+    },
+    {
+      "path": "vendor/tetorica-msm5205/NOTICE.md",
+      "size": 2064,
+      "sha256": "cc7402a07f59994df098e77cfaec3ba406e54d62c5427530501f5529da9af85d"
+    },
+    {
+      "path": "wasm/msm5205_wasm.c",
+      "size": 2191,
+      "sha256": "75afbd7939954446aed0f0c3af64c0364443949eefaf2b63faad37947a09e471"
+    },
+    {
+      "path": "scripts/build_msm5205_wasm.sh",
+      "size": 1397,
+      "sha256": "2712749f182d50a1c57f0615b3dc47bf6a8e1c6b2e1de9e37ca879ce623b8ca1"
+    }
+  ],
+  "files": [
+    {
+      "path": "native/msm5205/msm5205_pcm.c",
+      "bytes": 6720,
+      "sha256": "2554a3c98f3d4de6886e61bbd805451247214c38f18069a97f2796dbbbd9f5be"
+    },
+    {
+      "path": "native/msm5205/msm5205_pcm.h",
+      "bytes": 3618,
+      "sha256": "aa80487e6bc5b6c79f08ba45dbbf4e475e65dcc7c7c1399de354d743211fbee9"
+    },
+    {
+      "path": "native/msm5205/LICENSE",
+      "bytes": 1617,
+      "sha256": "38607b04a502faeb382f075f8cf3c83eb5e0232b97fd5ec24f76a30875765a5a"
+    },
+    {
+      "path": "native/msm5205/NOTICE.md",
+      "bytes": 2064,
+      "sha256": "cc7402a07f59994df098e77cfaec3ba406e54d62c5427530501f5529da9af85d"
+    },
+    {
+      "path": "native/msm5205/msm5205_wasm.c",
+      "bytes": 2191,
+      "sha256": "75afbd7939954446aed0f0c3af64c0364443949eefaf2b63faad37947a09e471"
+    },
+    {
+      "path": "scripts/build_msm5205_wasm.sh",
+      "bytes": 1389,
+      "sha256": "4cb6ec51694be47135afab8b694514f955343bbe58a45e983d87bb133cf414db"
+    },
+    {
+      "path": "native/msm5205/README.md",
+      "bytes": 1714,
+      "sha256": "4bb646193bc469310020ded960858db4a5bba5f1f65db6edff49e7179797614d"
+    },
+    {
+      "path": "MSM5205.md",
+      "bytes": 1125,
+      "sha256": "9fc6843c8e0dbed14ec4f1184be3bde5015a93cad80e12edc472bc9aceae2f87"
+    }
+  ],
+  "modifications": [
+    "Only source/include paths in scripts/build_msm5205_wasm.sh relocate vendor/tetorica-msm5205 and wasm/msm5205_wasm.c to native/msm5205. Core, header, bridge, license and notice bytes are unchanged. Bundle README/guide and this receipt are generated."
+  ]
+}
