@@ -2,9 +2,13 @@
 import {SOUNDCHIP_MIXER_PRESETS} from '../js/soundchip_mixer_presets.js';
 
 export const PC_ENGINE_SOURCES=Object.freeze(['huc6280','msm5205','cdda']);
+// Standalone HuC listening level only; calibrated source faders stay absolute.
+export const HUC6280_APPLICATION_OUTPUT_GAIN=4;
 const measured=new Map(SOUNDCHIP_MIXER_PRESETS.calibrated.factoryDefaults.kinds.map(({name,volume})=>[name,volume]));
+// App listening defaults: keep HuC's calibrated level, start the two media
+// players at 30%. This does not change the shared Mixer or explicit settings.
 export const PC_ENGINE_SOURCE_DEFAULTS=Object.freeze(Object.fromEntries(PC_ENGINE_SOURCES.map(id=>[id,
-  Object.freeze({volume:measured.get(id)??1,pan:0,muted:false,effectiveMuted:false})])));
+  Object.freeze({volume:id==='huc6280'?(measured.get(id)??1):.3,pan:0,muted:false,effectiveMuted:false})])));
 
 export function readPcEngineSourceMix(value=PC_ENGINE_SOURCE_DEFAULTS){
   if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(id=>!PC_ENGINE_SOURCES.includes(id)))throw TypeError('Expected PC Engine source mixer settings');
@@ -39,7 +43,9 @@ export function setupPcEngineSourceMix({root,mix}){
   for(const id of PC_ENGINE_SOURCES){
     const row=doc.createElement('div');row.className='huc-source-mix-row';row.dataset.cdrom2Source=id;
     const label=doc.createElement('label'),name=doc.createElement('span'),range=doc.createElement('input'),output=doc.createElement('output'),mute=doc.createElement('button');
-    name.textContent=labels[id];range.type='range';range.min='0';range.max='3.8';range.step='0.01';range.dataset.mixerVolume='';range.setAttribute('aria-label',`${labels[id]} volume, 0 to 380 percent`);
+    name.textContent=id==='huc6280'?`${labels[id]} ×${HUC6280_APPLICATION_OUTPUT_GAIN}`:labels[id];
+    if(id==='huc6280')name.title=`HuC software output ×${HUC6280_APPLICATION_OUTPUT_GAIN} before Code FX. Mixer percentages keep their calibrated source units.`;
+    range.type='range';range.min='0';range.max='3.8';range.step='0.01';range.dataset.mixerVolume='';range.setAttribute('aria-label',`${labels[id]} volume, 0 to 380 percent`);
     output.setAttribute('aria-label',`${labels[id]} mixer level`);mute.type='button';mute.dataset.mixerMute='';mute.textContent='Mute';mute.setAttribute('aria-label',`Mute ${labels[id]}`);
     label.append(name,range,output);row.append(label,mute);root.append(row);controls.set(id,{range,output,mute});
     listen(range,'input',()=>mix.set(id,{volume:Number(range.value)}));listen(range,'change',()=>range.blur());

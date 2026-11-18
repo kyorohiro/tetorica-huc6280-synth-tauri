@@ -13,8 +13,8 @@
       "size": 55
     },
     "CHANGELOG.md": {
-      "sha256": "a2f0a2af06d85dbb3086ca8db2b8bb51b7d5fc1a0572afb5b35155bbcbb4dc84",
-      "size": 28210
+      "sha256": "bc86d6758f63e38769dce5452faa6f9e7a628e6cc3765bab6ed6d9931c474c16",
+      "size": 28539
     },
     "CMakeLists.txt": {
       "sha256": "769d676f59f1e9ba925b04d7e67cd43d49141f11da37ab897f7eea6029d4e121",
@@ -45,8 +45,8 @@
       "size": 52978
     },
     "catalog/source_inventory.json": {
-      "sha256": "261a4a9581f193de106f913c1f3dae0e6ae983a3aed36cb22ab1038f7cb81f24",
-      "size": 156707
+      "sha256": "98da8d69847dcd705711b9544c83d04ca15e1f80c84dca68f9196473781556ee",
+      "size": 156996
     },
     "docs/architecture.md": {
       "sha256": "a2c8bd52454f4328b399f542b78ddd534942c9e603721ffa431daf5b3c32deda",
@@ -777,8 +777,8 @@
       "size": 891
     },
     "scripts/build_spc_wasm.sh": {
-      "sha256": "3eed01347f67aaae3690db3050fdfcff104fe209f621826870c651e732b57577",
-      "size": 1480
+      "sha256": "a30a1b1a4938f34ebc112f8c762d557a3e46dd6575a7968e30b617896452ed0b",
+      "size": 1499
     },
     "scripts/build_wonderswan_wasm.sh": {
       "sha256": "e1f78911e0ce5795dd0963782f53a7a41e4f749c456a7fa93289ef286793f8d7",
@@ -801,8 +801,8 @@
       "size": 1067
     },
     "scripts/build_ym2608_wasm.sh": {
-      "sha256": "d81b55c8c7486fe0a94f749fda2d5c7cbd114c34c8bdbc3aac217f7f20bda52b",
-      "size": 1238
+      "sha256": "e62d5f7e50ec0af80f743fb8464ac0f9b72091f1bc154b6087140d691524190e",
+      "size": 1265
     },
     "scripts/build_ym2610b_wasm.sh": {
       "sha256": "cab13d11416f6c0ede3bbfacdb9e73fa4feb6eb4127947ba54c76fb11ab373e5",
@@ -865,8 +865,8 @@
       "size": 15168
     },
     "sdk.json": {
-      "sha256": "4f1d607f69cd191c717f349c0df3df8e5f5da9fb16a014137966af5a70a2dcd5",
-      "size": 295
+      "sha256": "fed055b65e3fd40abee4b3ca5783c57ab313843a48296d9b7ca5d144adfae668",
+      "size": 298
     },
     "tests/README.md": {
       "sha256": "ede0407989c463210456947818b82bf7137f2ec1f84f3e9864bb9295c7399541",
@@ -936,6 +936,10 @@
       "sha256": "dd2ceb3438e69d96fc392bebde29aeea712df9328d943a3516692dfe59851b04",
       "size": 11926
     },
+    "tests/ym2608_output_gains_wasm_smoke.mjs": {
+      "sha256": "406aeea76450b62c925a2fae22dafa898e3d583b818e609cf7ae163562b2ca27",
+      "size": 6387
+    },
     "vendor/README.md": {
       "sha256": "e8bf25567d12d8fbf51772fa356d2bf713a51acbc5c8fac160ee523ac378018d",
       "size": 2226
@@ -1001,16 +1005,16 @@
       "size": 1510
     },
     "vendor/mame-ay8910/README.md": {
-      "sha256": "d41552a7edc4156988dfee0395d501431507f5c8429217786d6a4be5078ae99f",
-      "size": 4194
+      "sha256": "431783f35c52689eb9cc0d39d8073e62f6d0ccf2fbf2eed5c108522c5646eb4b",
+      "size": 5222
     },
     "vendor/mame-ay8910/ay8910.cpp": {
-      "sha256": "3ea3efe1b29a554c39a2b1995e9ed3d2588c16d24b085ca1565c3a24f4414646",
-      "size": 4783
+      "sha256": "e6f3cf07bd25e1f5f18455db302758993910154a82e401ee1566103e184f432b",
+      "size": 7415
     },
     "vendor/mame-ay8910/ay8910.h": {
-      "sha256": "e93d1904d2c232f820c23a6df59dfebf309550a6f8b0032e20c51295e7d31e7a",
-      "size": 2431
+      "sha256": "1663b65a64715f23826eece168489ca2a15e001f01fee93779bf4cf307ae7156",
+      "size": 2697
     },
     "vendor/mame-ay8910/upstream/ay8910.cpp": {
       "sha256": "865e8ea6ff17acf107f00c48f39ee04df48319fc1780aa0ddb635d754fa2d514",
@@ -1513,8 +1517,8 @@
       "size": 26526
     },
     "vendor/snes-spc/README.md": {
-      "sha256": "0a4ef415f103b996772d321ba2ff28614a27a9c83cfe4afd437a779e58ab0775",
-      "size": 3444
+      "sha256": "904c8a52ba8ee7b1bd3da4db68fcd9ee34c4aff7414e6ca449ef4fdbdf58b004",
+      "size": 3643
     },
     "vendor/snes-spc/README.upstream.md": {
       "sha256": "da0bfe0b5183787d61314fe7964e2c231675a9e61ce734ff7887b55fbf7d1362",
@@ -1541,8 +1545,8 @@
       "size": 17737
     },
     "vendor/snes-spc/snes_spc/SNES_SPC.h": {
-      "sha256": "3ebf24542de1405b054fc7f044516aa25eabdd530a66daf1f91468a1e52a00ae",
-      "size": 9033
+      "sha256": "63e8b9a88c31530190a55786a15b4d02a103892f9b6e128de4fb4e50baa3f96f",
+      "size": 9490
     },
     "vendor/snes-spc/snes_spc/SNES_SPC_misc.cpp": {
       "sha256": "d89d85fd584299360eb304219658f2b92121b5dd4e8a4089e1e7d4806c1a8d3e",
@@ -1789,7 +1793,7 @@
       "size": 7752
     },
     "wasm/ay8910_wasm.cpp": {
-      "sha256": "15107f52744c9e67db2daf0bfa052ebb04a63dc92779576e46c4c10b64009ebb",
+      "sha256": "d5a03082806adc7d1aac6ce8f4fae0aa96b669707b22d837749a19eefe55846b",
       "size": 851
     },
     "wasm/cdda_wasm.c": {
@@ -1865,8 +1869,8 @@
       "size": 1392
     },
     "wasm/spc_wasm.cpp": {
-      "sha256": "2c88efc7f10d0b4cd1124163f0a99caf0e1d8cac3ba1767de1134c30d62e8d77",
-      "size": 15355
+      "sha256": "1575ff7e23d6486385612d2d22b026fa5cca7e7a39e7dbb9db37f5fa9c35fb19",
+      "size": 15749
     },
     "wasm/wonderswan_wasm.cpp": {
       "sha256": "7f5de6a81470494b3e1b6f8f290e12ad1c9856b3024582e0618120b8d4e046cf",
@@ -1889,8 +1893,8 @@
       "size": 2026
     },
     "wasm/ym2608_wasm.cpp": {
-      "sha256": "d62fd4958a90359a766b443738a84caf9aa18023ba008ab6743d10113965cd0c",
-      "size": 4744
+      "sha256": "edcc0f8369514fded3c8bee51ff747594dceeb0223946a0f9a94260dae02fdc4",
+      "size": 6574
     },
     "wasm/ym2610b_wasm.cpp": {
       "sha256": "aeda15e37d3336028f46a8daf9ae48d092d7188f079d74a3492db25d21f6f849",
@@ -1924,5 +1928,5 @@
   "kind": "source",
   "name": "tetorica-soundchip-native",
   "schemaVersion": 1,
-  "version": "0.1.8-huc-state"
+  "version": "0.1.8-fm2608-mixer"
 }

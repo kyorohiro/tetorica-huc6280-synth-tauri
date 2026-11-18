@@ -661,7 +661,98 @@ type PlaygroundSelectedFmChannel = TetoricaSelectedChip extends PlaygroundNative
   : TetoricaSelectedChip extends 'ym2203' ? 0 | 1 | 2
   : TetoricaSelectedChip extends 'ym2610' ? 0 | 1 | 2 | 3
   : OPNFmChannel;
-interface YM2612FMApi extends FMApi {}
+/** Register-only operations recorded without reading or changing the chip. */
+interface PlaygroundYm2612OperationRecorder {
+  /** Absolute seconds from the reservation start; offsets are nondecreasing. */
+  atSeconds(seconds:number):PlaygroundYm2612OperationRecorder;
+  /** Absolute reference-sample offset. Default reference rate is 44100 Hz. */
+  atSample(sample:number):PlaygroundYm2612OperationRecorder;
+  write(port:0|1,register:number,value:number):PlaygroundYm2612OperationRecorder;
+  rawWrite(port:0|1,register:number,value:number):PlaygroundYm2612OperationRecorder;
+  setPreset(channel:YM2612Channel,preset:YM2612Preset):PlaygroundYm2612OperationRecorder;
+  /** Unspecified fields resolve from applied chip state at execution. */
+  setOperator(channel:YM2612Channel,operator:YM2612Operator,params:YM2612OperatorParams):PlaygroundYm2612OperationRecorder;
+  setOperators(channel:YM2612Channel,entries:Array<[YM2612Operator,YM2612OperatorParams]>):PlaygroundYm2612OperationRecorder;
+  setAlgo(channel:YM2612Channel,algorithm:YM2612Algorithm,feedback?:YM2612Feedback):PlaygroundYm2612OperationRecorder;
+  setPan(channel:YM2612Channel,left:boolean,right:boolean,ams?:YM2612Ams,pms?:YM2612Pms):PlaygroundYm2612OperationRecorder;
+  setLfo(enabled:boolean,frequency:number):PlaygroundYm2612OperationRecorder;
+  setChannel3SpecialMode(enabled:boolean):PlaygroundYm2612OperationRecorder;
+  setChannel3SpecialFrequency(operator:YM2612Operator,block:number,fnum:number):PlaygroundYm2612OperationRecorder;
+  setFrequency(channel:YM2612Channel,hz:number):PlaygroundYm2612OperationRecorder;
+  setFrequency(channel:YM2612Channel,block:number,fnum:number):PlaygroundYm2612OperationRecorder;
+  setNote(channel:YM2612Channel,note:string|number):PlaygroundYm2612OperationRecorder;
+  setBlockFnum(channel:YM2612Channel,block:number,fnum:number):PlaygroundYm2612OperationRecorder;
+  keyOn(channel:YM2612Channel,operators?:YM2612Operator[]):PlaygroundYm2612OperationRecorder;
+  keyOff(channel:YM2612Channel,operators?:YM2612Operator[]):PlaygroundYm2612OperationRecorder;
+  noteOn(channel:YM2612Channel,note:string|number):PlaygroundYm2612OperationRecorder;
+  noteOn(channel:YM2612Channel,block:number,fnum:number):PlaygroundYm2612OperationRecorder;
+  noteOnRaw(channel:YM2612Channel,block:number,fnum:number):PlaygroundYm2612OperationRecorder;
+  noteOff(channel:YM2612Channel):PlaygroundYm2612OperationRecorder;
+  setDacEnabled(enabled:boolean):PlaygroundYm2612OperationRecorder;
+  writeDac(value:number):PlaygroundYm2612OperationRecorder;
+}
+interface PlaygroundYm2612BuildOptions { referenceSampleRate?:number; }
+interface PlaygroundYm2612OperationProgram {
+  readonly version:1;
+  readonly chip:'ym2612';
+  readonly referenceSampleRate:number;
+  readonly operations:readonly {time:{unit:'sample'|'seconds';value:number};order:number;method:string;args:readonly unknown[]}[];
+}
+/** Detached operation-resolution state; not an engine phase/envelope save state. */
+interface PlaygroundYm2612StateSnapshot {
+  readonly format:'tetorica-ym2612-state';
+  readonly version:1;
+  readonly instanceId:string|number;
+  readonly clock:number;
+  readonly engine:PlaygroundYm2612Engine;
+  readonly registers:readonly (readonly number[])[];
+  readonly frequencyLatches:readonly number[];
+  readonly pitches:readonly number[];
+  readonly specialPitches:readonly number[];
+  readonly keyMasks:readonly number[];
+  readonly frame:number;
+  readonly sampleRate:number;
+}
+interface PlaygroundYm2612CompiledWrite {
+  offsetSeconds:number;
+  port:0|1;
+  register:number;
+  value:number;
+  operationIndex:number;
+  writeIndex:number;
+}
+interface PlaygroundYm2612CompileOptions {
+  /** current captures applied renderer state asynchronously. client uses the
+   * complete optimistic JS shadow, excluding later scheduled/native edits.
+   * reset and captured snapshots require no renderer communication. */
+  initialState?:'current'|'client'|'reset'|PlaygroundYm2612StateSnapshot;
+}
+interface PlaygroundYm2612ScheduleOptions { name:string; repeatSeconds?:number; }
+interface PlaygroundYm2612ScheduleReceipt {
+  name:string;
+  startFrame?:number;
+  sampleRate:number;
+  entries:number;
+  repeatSeconds?:number;
+  staged?:boolean;
+}
+interface PlaygroundYm2612TimedApi {
+  /** Record once without changing registers or copying live state. */
+  build(callback:(recorder:PlaygroundYm2612OperationRecorder)=>void|PlaygroundYm2612OperationRecorder,options?:PlaygroundYm2612BuildOptions):PlaygroundYm2612OperationProgram;
+  /** Resolve one virtual pass. Repeated writes and their order are preserved.
+   * A compiled trace excludes unrelated operations that may execute at playback. */
+  compile(operations:PlaygroundYm2612OperationProgram,options?:PlaygroundYm2612CompileOptions):Promise<PlaygroundYm2612CompiledWrite[]>;
+  /** Capture a coherent register/control snapshot while audio continues.
+   * Authoritative capture and scheduling require an AudioWorklet, not Native. */
+  captureState():Promise<PlaygroundYm2612StateSnapshot>;
+  /** Sample-timed software reservation. Resolves on acceptance; named replacement
+   * is atomic. Limits: 4096 operations/pattern, 128 names and 48000 repeated
+   * operations/second; queued commands and patterns share a 65536 entry limit. */
+  schedule(operations:PlaygroundYm2612OperationProgram,options:PlaygroundYm2612ScheduleOptions):Promise<PlaygroundYm2612ScheduleReceipt>;
+  clearSchedule(name:string):Promise<boolean>;
+}
+
+interface YM2612FMApi extends FMApi, PlaygroundYm2612TimedApi {}
 interface YM2203FMApi extends PlaygroundOPNFm<0 | 1 | 2, false> {}
 interface YM2608FMApi extends PlaygroundOPNFm<OPNFmChannel> {}
 interface YM2610FMApi extends PlaygroundOPNFm<0 | 1 | 2 | 3> {
@@ -1102,6 +1193,8 @@ interface Console {
   log(...args: unknown[]): void;
   warn(...args: unknown[]): void;
   error(...args: unknown[]): void;
+  /** Text table in Code Console; large displays explicitly report omitted rows. */
+  table(data?:unknown,columns?:readonly string[]):void;
 }
 declare var console: Console;
 /** Browser timer helper available in playground examples. */
@@ -1178,6 +1271,8 @@ type PlaygroundAPIBase = {
   prepareVabTone: typeof prepareVabTone;
   exportVab: typeof exportVab;
   MAX_VAB_FILE_BYTES: typeof MAX_VAB_FILE_BYTES;
+  assembleScspDsp: typeof assembleScspDsp;
+  disassembleScspDsp: typeof disassembleScspDsp;
   midi: PlaygroundMidi;
   /** Primary FM API for the selected mode. */
   fm: PlaygroundSelectedFm;
@@ -1847,6 +1942,32 @@ declare function prepareVabTone(bank:Ps1VabBank, toneNumber:number):Ps1VabPrepar
 /** Export the unchanged source bank returned by readVab, or one available Tone.
  * Preserves source ADPCM/metadata; edited or cloned banks must be reopened first. */
 declare function exportVab(bank:Ps1VabBank, options?:Ps1VabExportOptions):Uint8Array;
+/** Assemble provisional SCSP DSP field source locally into an independent
+ * Uint16Array of 512 logical MPRO words, four words per physical step.
+ * Decimal steps 0–127 increase strictly. Missing fields and positions are zero.
+ * Semicolons begin source comments. Validation errors report source lines.
+ * Pure synchronous helper, also available as pg.assembleScspDsp.
+ * Runs locally in JavaScript without WASM loading, audio setup or chip mutation.
+ * Run follows the selected mode's existing audio preparation lifecycle.
+ * The codec supports field source and RAW0–RAW3 inspection data. Synth execution
+ * uses a guarded profile, with coefficient setup and validation performed separately.
+ * @example
+ * const words = assembleScspDsp('003: EWT=1 COEF=1');
+ * console.table(Array.from(words));
+ */
+declare function assembleScspDsp(source:string):Uint16Array;
+/** Recover editable field source from a complete 512-word SCSP DSP image.
+ * Input words retain their values. Compact output includes internal zero steps
+ * through the last nonzero instruction. All-zero input produces an empty string.
+ * includeTrailingZeros emits all 128 physical positions. RAW fields preserve
+ * uninterpreted bits in existing instruction images for inspection and round trips.
+ * Pure synchronous helper, also available as pg.disassembleScspDsp.
+ * Runs locally in JavaScript without WASM loading, audio setup or chip mutation.
+ * @example
+ * const source = disassembleScspDsp(words, {includeTrailingZeros:true});
+ * console.log(source);
+ */
+declare function disassembleScspDsp(words:Uint16Array|readonly number[], options?:{includeTrailingZeros?:boolean}):string;
 interface PlaygroundBrrEncodeOptions {
   /** Null/omitted for one-shots. Loop start and source length must be multiples of 16. */
   loopStartSamples?:number | null;
@@ -2191,7 +2312,7 @@ declare function createSoundChip(name:'ps1', options?:PlaygroundCreateSoundChipO
 declare function createSoundChip(name:'spc', options?:PlaygroundCreateSoundChipOptions):Promise<PlaygroundSpc & {readonly id:string}>;
 
 /** Independent chips. Global play/write still target the default Playground chip. */
-type PlaygroundCreatedFm = Omit<FMApi, 'dac' | 'scheduleWrites' | 'read' | 'readStatus' | 'getIrq'> & {readonly engine: PlaygroundYm2612Engine; dispose(): void};
+type PlaygroundCreatedFm = Omit<YM2612FMApi, 'dac' | 'scheduleWrites' | 'read' | 'readStatus' | 'getIrq'> & {readonly engine: PlaygroundYm2612Engine; dispose(): void};
 type PlaygroundCreatedOPN<C extends OPNFmChannel, Stereo extends boolean = true> = Omit<PlaygroundOPNFm<C, Stereo>, 'scheduleWrites' | 'read' | 'readStatus' | 'getIrq' | 'rawWrite' | 'writeAddress' | 'writeData'> & {dispose(): void};
 /** Native supports independent ymfm/Nuked FM6/DAC-register chips; SPC file players, SNES S-DSP, 32X PWM, DX7, HuC6280, NES (optional FDS), Game Boy, OKIM6258, RF5C164, YMF262, YM3526, YM3812, Y8950, YM2413, AY-3-8910, YM2151, YM2610/YM2610B, YM2608, YM2203, YM2612 and Sega PSG share a 16-instance limit and 64 MiB budget. */
 declare function createSoundChip(name: 'ym2612', options?: PlaygroundCreateYm2612Options): Promise<PlaygroundCreatedFm & PlaygroundChipClock & {readonly id: string}>;
@@ -2249,9 +2370,124 @@ interface PlaygroundAy8910Voice {
   frequency?:number;
   note?:string|number;
 }
+interface PlaygroundAy8910BuildOptions {
+  /** Reference rate for atSample(), default 44100 Hz, independent of output rate. */
+  referenceSampleRate?:number;
+}
+/** Supported register operations recorded by build(). */
+type PlaygroundAy8910RecordedMethod =
+  | 'writeRegister'|'setVoice'|'tone'|'setTone'|'noise'|'setMixer'|'setVolume'
+  | 'setEnvelope'|'setNoisePeriod'|'setTonePeriod'|'setFrequency'|'setNote'
+  | 'keyOn'|'keyOff'|'noteOn'|'noteOff'|'off'|'allNotesOff';
+interface PlaygroundAy8910OperationTime {
+  readonly unit:'sample'|'seconds';
+  readonly value:number;
+}
+type PlaygroundAy8910RecordedOperation = {
+  [Method in PlaygroundAy8910RecordedMethod]: {
+    readonly time:PlaygroundAy8910OperationTime;
+    readonly order:number;
+    readonly method:Method;
+    readonly args:Readonly<Parameters<PlaygroundAy8910[Method]>>;
+  }
+}[PlaygroundAy8910RecordedMethod];
+/** Serializable operations in authored order, with at most 4096 calls. */
+interface PlaygroundAy8910OperationProgram {
+  readonly version:1;
+  readonly chip:'ay8910';
+  readonly referenceSampleRate:number;
+  readonly operations:readonly PlaygroundAy8910RecordedOperation[];
+}
+/** Synchronous recording receiver. Every mutator returns this receiver. */
+interface PlaygroundAy8910OperationRecorder {
+  /** Absolute seconds from the reservation start. Offsets must be nondecreasing. */
+  atSeconds(seconds:number):PlaygroundAy8910OperationRecorder;
+  /** Absolute reference-sample offset from the start, using the build reference rate. */
+  atSample(sample:number):PlaygroundAy8910OperationRecorder;
+  writeRegister(register:number,value:number):PlaygroundAy8910OperationRecorder;
+  setVoice(channel:PlaygroundAy8910Channel,voice:PlaygroundAy8910Voice):PlaygroundAy8910OperationRecorder;
+  tone(channel:PlaygroundAy8910Channel,options?:{period?:number;frequency?:number;note?:string|number;volume?:number;envelope?:boolean}):PlaygroundAy8910OperationRecorder;
+  setTone(channel:PlaygroundAy8910Channel,options?:{period?:number;frequency?:number;note?:string|number;volume?:number;envelope?:boolean}):PlaygroundAy8910OperationRecorder;
+  noise(channel:PlaygroundAy8910Channel,options?:{period?:number;volume?:number;envelope?:boolean}):PlaygroundAy8910OperationRecorder;
+  setMixer(channel:PlaygroundAy8910Channel,options:{tone?:boolean;noise?:boolean}):PlaygroundAy8910OperationRecorder;
+  setVolume(channel:PlaygroundAy8910Channel,volume:number,envelope?:boolean):PlaygroundAy8910OperationRecorder;
+  /** Repeated Shape writes retain each shared-envelope retrigger. */
+  setEnvelope(options:{period?:number;shape?:number}):PlaygroundAy8910OperationRecorder;
+  setNoisePeriod(period:number):PlaygroundAy8910OperationRecorder;
+  setTonePeriod(channel:PlaygroundAy8910Channel,period:number):PlaygroundAy8910OperationRecorder;
+  setFrequency(channel:PlaygroundAy8910Channel,frequency:number):PlaygroundAy8910OperationRecorder;
+  setNote(channel:PlaygroundAy8910Channel,note:string|number):PlaygroundAy8910OperationRecorder;
+  keyOn(channel:PlaygroundAy8910Channel):PlaygroundAy8910OperationRecorder;
+  keyOff(channel:PlaygroundAy8910Channel):PlaygroundAy8910OperationRecorder;
+  noteOn(channel:PlaygroundAy8910Channel,note:string|number):PlaygroundAy8910OperationRecorder;
+  noteOff(channel:PlaygroundAy8910Channel):PlaygroundAy8910OperationRecorder;
+  off(channel:PlaygroundAy8910Channel):PlaygroundAy8910OperationRecorder;
+  allNotesOff():PlaygroundAy8910OperationRecorder;
+}
+/** Detached authoritative register/control state captured between complete operations. */
+interface PlaygroundAy8910StateSnapshot {
+  readonly format:'tetorica-ay8910-state';
+  readonly version:1;
+  readonly instanceId:string|number;
+  readonly clock:number;
+  readonly type:0|16;
+  readonly flags:number;
+  /** Sixteen raw register bytes. */
+  readonly registers:readonly number[];
+  /** Three configured levels retained across Key Off. */
+  readonly levels:readonly number[];
+  readonly frame:number;
+  readonly sampleRate:number;
+}
+interface PlaygroundAy8910CompileOptions {
+  /** current captures renderer state asynchronously. client uses complete local
+   * state, including stale/optimistic values. reset constructs chip reset state.
+   * A captured snapshot reuses that fixed baseline with compatible identity/config. */
+  initialState?:'current'|'client'|'reset'|PlaygroundAy8910StateSnapshot;
+}
+interface PlaygroundAy8910CompiledWrite {
+  offsetSeconds:number;
+  register:number;
+  value:number;
+  operationIndex:number;
+  writeIndex:number;
+}
+interface PlaygroundAy8910ScheduleOptions {
+  /** One named reservation per chip. Reusing a name replaces its future operations. */
+  name:string;
+  /** Omit for one pass. A positive interval must exceed the final operation offset. */
+  repeatSeconds?:number;
+}
+interface PlaygroundAy8910ScheduleReceipt {
+  name:string;
+  /** Assigned when installed. Top-level Synth Code installs after successful evaluation. */
+  startFrame?:number;
+  sampleRate:number;
+  entries:number;
+  repeatSeconds?:number;
+  /** True while a top-level Synth Code change awaits successful evaluation. */
+  staged?:boolean;
+}
 interface PlaygroundAy8910 {
   readonly chip:'ay8910';
   readonly channels:3;
+  /** Record a synchronous callback once. Recording copies arguments and reads no
+   * live chip state. Supports at most 4096 operations. */
+  build(callback:(recorder:PlaygroundAy8910OperationRecorder)=>void|PlaygroundAy8910OperationRecorder,options?:PlaygroundAy8910BuildOptions):PlaygroundAy8910OperationProgram;
+  /** Compile one virtual pass using a private work state. client/reset/snapshot
+   * use local data. current captures applied AudioWorklet state. Incomplete
+   * client state and incompatible snapshots reject the Promise. */
+  compile(operations:PlaygroundAy8910OperationProgram,options?:PlaygroundAy8910CompileOptions):Promise<PlaygroundAy8910CompiledWrite[]>;
+  /** Capture coherent applied registers and retained levels while rendering
+   * continues. AudioWorklet support is required. Native rejects this request. */
+  captureState():Promise<PlaygroundAy8910StateSnapshot>;
+  /** Reserve sample-accurate AudioWorklet execution. Resolves on acceptance.
+   * Limits are 128 patterns, 4096 entries per pattern and 48000 aggregate repeated
+   * operations per second. Stored pattern entries and queued commands share a
+   * 65536-command limit. Native rejects scheduling. */
+  schedule(operations:PlaygroundAy8910OperationProgram,options:PlaygroundAy8910ScheduleOptions):Promise<PlaygroundAy8910ScheduleReceipt>;
+  /** Cancel future operations of this named reservation. */
+  clearSchedule(name:string):Promise<boolean>;
   initialize():void;
   reset():void;
   writeRegister(register:number,value:number):void;
@@ -2746,6 +2982,8 @@ interface PlaygroundScspEnvelope {
   decayLevel: number;
   releaseRate: number;
   keyRateScaling: number;
+  /** Hardware LPSLNK: hold Attack until the sample reaches its loop start. Default false. */
+  loopLink?: boolean;
 }
 interface PlaygroundScspMix {
   /** 0..255 attenuation; 0 loudest. */
@@ -2754,7 +2992,50 @@ interface PlaygroundScspMix {
   directLevel: number;
   /** Hardware DIPAN 0..31; 0 center, 15 right only, 31 left only. */
   pan: number;
+  /** Hardware IMXL 0..7; omitted/0 disables the send. Native requires 0. */
+  dspSend?: number;
+  /** Hardware ISEL input bus 0..1; omitted uses MIXS0. Web Audio only. */
+  dspInput?: number;
 }
+/** Signed Q12 hardware coefficient codes, each -4096..4095. */
+type PlaygroundScspDspCoefficientPatch = Partial<{0:number; 1:number; 2:number}>;
+interface PlaygroundScspDspCoefficients {codes:number[];}
+/** A setup update supplies every supported coefficient atomically. */
+interface PlaygroundScspDspApplyOptions {coefficients:{0:number; 1:number; 2:number};}
+interface PlaygroundScspDspReturn {
+  /** Selected EFREG0 / EFREG1 return level 0..7; 0 is muted. */
+  level:number;
+  /** Hardware EFPAN 0..31; 0 center, 15 right only, 31 left only. */
+  pan:number;
+}
+interface PlaygroundScspDspRam {address:number; byteLength:number;}
+interface PlaygroundScspDspDelaySettings {
+  enabled:boolean;
+  /** Integer milliseconds, 20..700 at the native 44.1 kHz rate. */
+  timeMs:number;
+  /** Realized signed COEF1 / 4096, -1..4095/4096. */
+  feedback:number;
+}
+type PlaygroundScspDspDelayPatch = Partial<PlaygroundScspDspDelaySettings>;
+interface PlaygroundScspDspProgramBase {
+  configured:boolean;
+  words:number[];
+  revision:number;
+  coefficients:PlaygroundScspDspCoefficients;
+  return:PlaygroundScspDspReturn;
+  /** Present after indexed return control; `return` is still output 0. */
+  returns?:[PlaygroundScspDspReturn,PlaygroundScspDspReturn];
+}
+/** Independent snapshots retain owned instruction and coefficient arrays. */
+interface PlaygroundScspDspRegisterProgram extends PlaygroundScspDspProgramBase {
+  profile:'ram-free';
+}
+interface PlaygroundScspDspDelayProgram extends PlaygroundScspDspProgramBase {
+  profile:'delay-ring';
+  delay:PlaygroundScspDspDelaySettings;
+  ram:PlaygroundScspDspRam;
+}
+type PlaygroundScspDspProgram = PlaygroundScspDspRegisterProgram | PlaygroundScspDspDelayProgram;
 interface PlaygroundScspLfo {
   frequencyCode: number;
   pitchWave: number;
@@ -2779,6 +3060,10 @@ interface PlaygroundScspState {
   nextSampleId: number;
   ramUsedBytes: number;
   ramFreeBytes: number;
+  /** Present after DSP state has been created; absent for untouched instruments. */
+  dsp?:PlaygroundScspDspProgram;
+  /** Managed ring reservation remains until reset({clearRam:true}). */
+  dspRam?:PlaygroundScspDspRam;
   playingSampleIds?: (number | null)[];
   samples: PlaygroundScspSample[];
   /** Authored presets; gate is the requested key state, not an activity meter. */
@@ -2798,6 +3083,44 @@ interface PlaygroundScsp {
   setFrequency(slot:number,hz:number):number;
   setNote(slot:number,note:string|number):number;
   setMix(slot:number,patch:Partial<PlaygroundScspMix>):void;
+  /** Apply a complete 512-word RAM-free DSP image and optional complete COEF0..2
+   * setup in audio-owner order. Rejects RAW bits, RAM I/O/address controls and
+   * unsupported coefficient/effect outputs before mutation. Allocates no RAM;
+   * retains samples, held voices and DSP TEMP history. Main/Worker Web Audio.
+   * Native rejects DSP methods with NotSupportedError. Pure assembly is separate.
+   * @example
+   * const words = assembleScspDsp('000: XSEL=1 YSEL=1 IRA=32 ZERO=1 COEF=0\n001: EWT=1 ZERO=1');
+   * await scsp.applyDspProgram(words, {coefficients:{0:2048,1:0,2:0}});
+   */
+  applyDspProgram(words:Uint16Array|readonly number[],options?:PlaygroundScspDspApplyOptions):Promise<PlaygroundScspDspRegisterProgram>;
+  /** Detached program/coefficients/return snapshot; no change to the audio owner. */
+  getDspProgram():Promise<PlaygroundScspDspProgram>;
+  getDspCoefficients():Promise<PlaygroundScspDspCoefficients>;
+  /** Partial signed COEF0..2 hardware codes, -4096..4095. Changes only coefficients;
+   * held voices and DSP TEMP history continue. This is not cutoff in Hz.
+   * @example
+   * await scsp.setDspCoefficients({1:3840,2:256});
+   */
+  setDspCoefficients(patch:PlaygroundScspDspCoefficientPatch):Promise<PlaygroundScspDspCoefficients>;
+  /** Legacy live EFREG0 return level/pan. Per-slot setMix({dspSend:7}) enables
+   * sends; dspInput selects MIXS0/1, directLevel controls the dry path. */
+  setDspReturn(patch:Partial<PlaygroundScspDspReturn>):Promise<PlaygroundScspDspReturn>;
+  /** Independent EFREG0 / EFREG1 return. Hardware pan 31 is left, 15 is right.
+   * @example
+   * await scsp.setDspReturn(0,{level:7,pan:31});
+   * await scsp.setDspReturn(1,{level:7,pan:15});
+   */
+  setDspReturn(output:0|1,patch:Partial<PlaygroundScspDspReturn>):Promise<PlaygroundScspDspReturn>;
+  /** Reserve a 64 KiB ring and apply the fixed SCSP Delay program. Time is
+   * 20..700 integer milliseconds. Feedback is quantized to signed Q12.
+   * Time / enabled edits clear the ring. Feedback edits preserve its tail.
+   * Send and return use setMix() / setDspReturn(). Main/Worker Web Audio.
+   * @example
+   * await scsp.setDspDelay({enabled:true,timeMs:240,feedback:.35});
+   * scsp.setMix(CH1,{dspSend:7});
+   * await scsp.setDspReturn({level:6});
+   */
+  setDspDelay(patch:PlaygroundScspDspDelayPatch):Promise<PlaygroundScspDspDelayProgram>;
   keyOn(slot:number):void;
   keyOff(slot:number):void;
   noteOn(slot:number,note:string|number):void;

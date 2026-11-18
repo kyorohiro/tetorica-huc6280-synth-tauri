@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "name": "tetorica-soundchip-native",
-  "version": "0.1.8-huc-state",
+  "version": "0.1.8-fm2608-mixer",
   "sourceCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
-  "archiveName": "tetorica-soundchip-native-0.1.8-huc-state-sources.zip",
-  "archiveSha256": "7fdb39e2c648ea1498279134560579ead409ab302f36d8c9ae7a61d8c4aa712d",
-  "manifestSha256": "e839739e9e7afc68003edc9c81d90535a2f949f6ab6c886dfe9059cf434be31d",
-  "fileCount": 481,
+  "archiveName": "tetorica-soundchip-native-ay-single-output-sources.zip",
+  "archiveSha256": "53dfb59440a29ca397dfaa6880dfa87fd205e57fe531ad8152177768a7294801",
+  "manifestSha256": "b3312faf56f7ddfb94f547a74ff99b583ad9ebf84baa9e447cd8e12f8eef0e4d",
+  "fileCount": 482,
   "unpublished": true,
   "localCandidate": {
     "baseCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
@@ -23,12 +23,23 @@
       "native/include/tetorica/huc6280_state.h",
       "native/tests/huc6280_state_fixture.cpp",
       "scripts/build_huc6280_wasm.sh",
+      "scripts/build_spc_wasm.sh",
+      "scripts/build_ym2608_wasm.sh",
       "sdk.json",
       "tests/huc6280_state_wasm_smoke.mjs",
+      "tests/ym2608_output_gains_wasm_smoke.mjs",
+      "vendor/mame-ay8910/README.md",
+      "vendor/mame-ay8910/ay8910.cpp",
+      "vendor/mame-ay8910/ay8910.h",
       "vendor/mame-huc6280/README.md",
       "vendor/mame-huc6280/huc6280.cpp",
       "vendor/mame-huc6280/huc6280.h",
-      "wasm/huc6280_wasm.cpp"
+      "vendor/snes-spc/README.md",
+      "vendor/snes-spc/snes_spc/SNES_SPC.h",
+      "wasm/ay8910_wasm.cpp",
+      "wasm/huc6280_wasm.cpp",
+      "wasm/spc_wasm.cpp",
+      "wasm/ym2608_wasm.cpp"
     ]
   }
 }

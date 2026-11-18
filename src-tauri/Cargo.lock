@@ -3603,7 +3603,7 @@ dependencies = [
 
 [[package]]
 name = "tetorica-huc6280-synth-tauri"
-version = "0.99.99"
+version = "0.99.995"
 dependencies = [
  "cpal",
  "serde",
