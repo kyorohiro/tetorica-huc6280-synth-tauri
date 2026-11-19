@@ -217,6 +217,17 @@ normal keyboard input. A later Code note can take over the same channel without
 being cut by an older hand-key release. Code frequency changes also survive
 returning the manual Pitch wheel to center.
 
+The header **Code / Synth** buttons beside Files choose the workspace layout.
+**Code** expands the same editor beside Files, with one tab row:
+**Code / HuC6280 / MSM5205 / CD-DA / Mixer / Keyboard**. Switch among those views
+without collapsing the workspace or restarting the performance. The transport
+stays above every expanded view, and the original header **Master** remains
+available, including its orange boost indication above 100%. **Synth** or the
+restore button returns the existing controls to the normal layout. These are
+view changes: they do not save working files, change the selected HuC channel,
+reload a media source or start Code/VGM playback. Arrow keys and Home/End
+navigate the expanded tab row; opening Code never creates a second editor.
+
 The child tabs below **HuC6280** offer **Auto** and **CH1–CH6** in normal, Code and VGM modes.
 Auto edits the common instrument and uses its automatic keyboard allocation
 (round robin for an ordinary Wave sound);
@@ -229,10 +240,20 @@ The **MSM5205** tab has one **CH1** source and **CD-DA** has one **Stereo** sour
 their child tabs describe those single outputs. Mixer has no channel editor.
 **Auto update** reads the configured wave and sent registers at up to 20 Hz;
 turn it off to reduce readback. This is an observation of software writes, not
-an oscillator-phase measurement. During Code, manual channel edits retain their changed
-fields in the authored instrument. Raw Code register writes do not overwrite
-the saved instrument. **Stop** fades the software output briefly, cancels Code
-and restores the authored settings with all notes released.
+an oscillator-phase measurement.
+**Live highlight** defaults On and briefly pulses changed, known hardware
+controls in the selected physical channel: source, level, balance, Noise and
+shared LFO settings, including the existing CH1/CH2 period controls. Its display
+preference is remembered locally, separately from presets/Cassettes. Initial
+observations, channel/run changes, Pause, hidden views and frozen Auto update
+establish fresh baselines without replaying old differences. Closed cards and
+unknown fields start quietly when shown. Rapid changes share one short CSS
+pulse; reduced motion shortens it. Highlighting adds no audio reads, polling,
+timers or PCM/wave comparisons. Auto's common authored sound is not a Live CH.
+Physical-channel edits and raw Code register
+writes are session changes; they do not overwrite the common sound document.
+**Stop** fades the software output briefly, cancels Code and restores the saved
+common instrument with all notes released.
 
 In normal mode a physical CH has independent settings and keyboard ownership.
 Selecting CH or Auto alone does not copy or unify settings. Stop / blur releases
@@ -294,9 +315,36 @@ silent, and `play()` starts the selected track. `pause()`, `resume()`,
 Track playback, file preparation, scheduling and FX are software functions.
 
 **Files** holds `index.js`, presets, text and binary assets. Selecting a sound
-loads it without stopping Code; selecting JSON while Keyboard is visible keeps
+chooses Auto without stopping Code or changing VGM Play/Pause; selecting JSON while Keyboard is visible keeps
 the Keyboard tab. Right-click a file for duplicate, rename, delete and creation
-actions. Save sound stores the common Auto instrument under `presets/`.
+actions. ＋ Instrument creates a named file for the common Auto instrument under `presets/`.
+
+**Auto apply** is On by default: edits become saved files immediately, and valid
+sound changes apply to the instrument. Turn it Off to keep a separate working
+version. Files marks changed paths with **●**. **Save** or **Ctrl/Cmd+S** accepts
+the selected file; **Save all** accepts every working change; **Discard** restores
+the selected file from its saved version. **Undo files** restores the previous
+file/project operation. Accepting a sound keeps Code loops, context, FX and
+unrelated live register fields running; physical CH controls remain immediate.
+
+Knobs, Main/LFO drawings and the selected sound JSON edit the same working
+document. A valid JSON edit refreshes the controls; an incomplete JSON remains
+editable and keeps the last playable sound. Knob edits are blocked until that
+document is valid, so they cannot erase unfinished text. Saving invalid JSON
+saves its text without replacing the last playable instrument.
+
+**Save never runs JavaScript.** Explicit **Run / Apply** uses saved entry code,
+modules and project assets. In manual mode, save those files first, then use
+Run / Apply. Source edits, sound selection and Save keep an existing performance
+running. A manual rename or deletion also keeps its current accepted execution
+path until the next Run / Apply.
+
+Local recovery and Cassette ZIP preserve both versions, the saving mode and the
+linked sound document. Ordinary files in the ZIP contain saved content; project
+metadata carries working differences. Unchanged binary assets appear once.
+Save accepts edits in memory; if browser storage fails, retain the project and
+use **Export project** to keep both versions. Temporary session WAVs still need
+to be reopened separately.
 The **Save to presets** button beside Channel saves the selected Auto or physical
 CH sound directly to `presets/`, without Capture, changing the channel view,
 selecting the new JSON, switching Keyboard / Code or stopping playback. The new
@@ -311,7 +359,11 @@ restore editable data without running Code or opening audio. Cassette projects
 are limited to **16 MiB expanded**, including settings and metadata; the existing
 direct audio / preset imports retain their **32 MiB** input limit. A large sound
 can therefore be played and saved separately even if it exceeds the project
-limit.
+limit. The standalone **Load preset…** action explicitly accepts an external
+sound, including in manual saving mode, and detaches the previous linked JSON.
+It never overwrites that document. If the sound cannot fit in Files, use
+**Save preset** to export it separately; Auto apply can keep editing that
+external sound in memory, while manual document edits require room in Files.
 
 ## Sounds from VGM
 
@@ -465,27 +517,31 @@ monitor. VGM loop points do not automatically repeat. The reference chip is
 independent of the authored instrument; Pause retains unheard PCM and its exact
 offset so Resume continues at the heard song position.
 
-Open the **Mixer** tab for **VGM output: CH1–CH6 On / Off**, alongside the three
-source-level controls. These
-software listening switches affect only the reference song mix, independently
-of the Channel view selector. All six start On. Turning a channel Off does not
+Open the **Mixer** tab for **HuC6280 output: CH1–CH6 On / Off**, alongside the
+three source-level controls. The same session switches apply to Keyboard, Code,
+VGM and paused CH audition, independently of the Channel view selector. They are
+available before loading a song or enabling audio; all six start On. Turning a channel Off does not
 stop its oscillator, change its recorded Gate/volume/Wave/Noise/DDA settings,
 or disable CH2's hardware LFO modulation of CH1. Live and Capture continue to
-show the recorded sound. Keyboard audition, the common Auto instrument and Code remain
-separate.
+show the recorded sound. A paused trial follows its original song CH even when
+its private instrument uses a different physical channel. These switches leave
+MSM5205 and CD-DA output to their separate source controls.
 
 Changes apply to newly generated PCM after already buffered audio has played;
 Pause retains that same buffered tail for Resume. On / Off never restarts the
 song or changes its position. Flags remain selected across Pause / Resume,
-Stop / Play and song changes in this session; they are not instrument preset
-fields and are not saved in a Cassette.
+Stop / Play, Code Run / Apply / Stop, sound selection, New Cassette and project
+changes in this session. Recreated audio engines adopt the same mask. These are
+not instrument preset fields and are not saved in a Cassette or across reloads.
+The buttons wait for audio acknowledgement; a rejected change keeps the previous
+accepted selection. Source **Reset** restores source levels, not the CH switches.
 
 Code and reference playback run one at a time. Play / Resume stops Code and
 releases manual keys; Run stops the reference song. **Stop all sound** stops
 both. Select **Auto** to play or adjust your own instrument while the song
-continues. Preset loads in Auto view also keep playback; loading another sound
-while viewing a physical song CH stops the reference and loads the authored
-instrument. Capture deliberately keeps the song paused.
+continues. Loading another sound chooses Auto and keeps the current Play/Pause
+position, including when a physical song CH was selected. Capture deliberately
+keeps the song paused.
 
 Select **CH1–CH6** to see the VGM's Wave, Noise, LFO, level, stereo balance,
 period and Gate in the same instrument UI. While playing, change hardware
@@ -531,7 +587,7 @@ speaker connection is added.
 
 Choose **Copy to Auto** to copy the configured Wave, Noise or CH1 LFO pair
 into the editable common instrument. The song stays paused at the same position
-and the view returns to **Auto**. Adjust it, then choose **Files → Save sound**
+and the view returns to **Auto**. Adjust it, then choose **Files → ＋ Instrument**
 to keep a preset. Alternatively, **Save to presets** saves the selected CH directly,
 without Capture or changing the view, song state or current Code file. Capture
 itself does not create a file or resume the song.
@@ -807,9 +863,24 @@ Keyboard／Codeを切り替え、同じHuC6280を`useSoundChip("huc6280")`で操
 Code実行中も鍵盤・つまみ・波形編集・音色の読込を使えます。
 Keyboard／Codeを切り替えてもloop・context・接続は維持します。Code表示中も、
 つまみや背景へFocusを移すと鍵盤演奏ができます。編集欄・文字入力・select・dialog内は演奏しません。
+Files横のCode／Synthは画面配置の切り替えです。Codeで同じエディターをFiles横へ拡大し、
+Code／HuC6280／MSM5205／CD-DA／Mixer／Keyboardを拡大状態のまま切り替えられます。
+Run／Apply／StopとヘッダーのMasterは各表示から操作でき、100%超のオレンジ表示も維持します。
+Synthまたは復元ボタンで通常配置へ戻します。表示変更だけでは演奏・選択CH・素材・未保存ファイルを変更しません。
 古い手動離鍵やPitch解除で新しいCodeの発音・周波数を巻き戻さず、Octave／CH変更は手動Releaseも解放します。
 CH1–CH6の表示・編集と自動更新、Files・Cassetteの保存／読込、型補完・実装への移動に対応します。
+FilesのAuto applyは初期Onで、編集を保存し、有効な音色変更を反映します。Offではworkingとsavedを分け、未保存のパスへ●を表示します。
+Save／Ctrl・Cmd+Sは選択ファイル、Save allは全変更を保存し、Discardは選択ファイルをsavedへ戻します。Undo filesでファイル／Project操作を戻せます。
+つまみ・波形と選択中の音色JSONは同じ文書を編集します。書きかけのJSONは消さず、最後の有効な音を保持し、つまみで上書きしません。
+手動保存時の音色はSaveで反映し、Codeのloop・context・FX・無関係なレジスタ値を維持します。物理CHの編集は直接反映するsession操作です。
+SaveだけではJavaScriptを実行しません。明示的なRun／ApplyはsavedのCode・module・素材を使います。
+両状態・保存mode・選択音色をlocal recovery／Cassetteへ残し、ZIP内の通常ファイルはsaved、差分はmetadataへ収めます。変更していないbinaryは重複しません。
+ブラウザー保存に失敗してもメモリ内の両状態は保ちます。Export projectで退避してください。session WAVは引き続き保存対象外です。
+音色の選択はAutoへ切り替わり、CodeやVGMのPlay／Pause位置を保ちます。KeyboardからCodeへ無理に切り替えません。
 HuC6280タブの下の子タブでAuto／CH1–CH6を選びます。Autoは共通音色と自動割当、各CHは表示・編集・鍵盤の対象を揃えます。
+Live highlightは初期Onで、表示中の既知のhardware値の変更を短く光らせます。設定は音色と分けてブラウザーへ記憶します。
+対象はSource・音量・左右balance・Noise・共有LFOと既存のCH1／CH2周期欄です。追加の音声読取・poll・timer・波形比較はしません。
+初回・CH切替・Pause・非表示・Auto update停止時は比較を取り直し、古い差分を再生しません。閉じた欄やUnknownの初回表示も光りません。
 MSM5205は単一のCH1、CD-DAはStereoの音源を表示し、MixerにはCH編集タブを出しません。
 FilesのExamplesボタンから`examples/huc6280.js`／`msm5205.js`／`cdda.js`を明示追加できます。
 既存ファイルを上書きせず、不足分だけ追加し、選択・Keyboard／Code・実行中のCodeは変えません。
@@ -852,11 +923,14 @@ VGM／VGZの元ファイルはFilesの`vgm/`へ保持し、モニター上の曲
 Stop／Code Runでは保持し、曲やCH別出力が変わると破棄します。Cache Offや再生欄の? → Clear seek cacheで解放できます。
 位置・編集用音色・Pause試奏は変えません。初めて移動する未cache区間は数秒かかることがあり、非対応backendや容量超過の点は通常の再構築で扱います。
 模範演奏は1回再生で、現在のMasterと出力モニターを使い、編集中の音色を保ちます。
-VGM outputのCH1–CH6 On／OffはMixerタブにまとめています。曲の聴き分け用のソフト側スイッチで、初期値は全CH On。
-表示対象のChannel選択とは独立し、共通Auto音色／Code／Pause試奏には適用しません。
+MixerのHuC6280 outputにCH1–CH6 On／Offをまとめています。Keyboard／Code／VGM／Pause試奏で共通のソフト側出力スイッチです。
+曲の読み込みやAudio有効化の前から操作でき、初期値は全CH On。表示・編集対象のCH選択や鍵盤の割り当ては変更しません。
+Pause試奏は内部で別のCHへ割り当てても元の曲のCHに従います。MSM5205／CD-DAはそれぞれの音源別Mixerで調整します。
 発振器・Noise・DDA・CH2→CH1のLFOと記録設定は保ち、出力だけを変更します。
 生成済みPCMを保持し、その先の音から反映します。Pause中の変更も未再生の短いbufferの後から反映されます。
-Pause／Resume、Stop／Play、曲切替でも選択を保持します。セッション内の状態で、音色presetやCassetteには保存しません。
+Pause／Resume、Stop／Play、Code Run／Apply／Stop、音色・曲・Project切替、New Cassetteと音声エンジン再作成でも選択を保持します。
+セッション内だけの状態で、音色presetやCassetteには保存せず、ページ再読み込みでは全CH Onへ戻ります。
+ボタンは音声側の適用完了を待ち、失敗した変更は直前の選択に戻します。SourceのResetはCH別出力を変更しません。
 Codeと曲再生は排他的で、RunとPlayが互いの演奏を停止します。Pauseは未再生PCMとoffsetを保持します。
 CH1–CH6を選ぶと、聞こえた位置の設定を同じ音色UIへ表示し、再生中もPause中も個別に編集できます。
 未記録Wave RAMは空欄、DDAは最後に書かれたDAC値を表示し、元のPCM音色や音階を推測しません。
@@ -872,7 +946,7 @@ LFO有効時はCH1でCH1・CH2の組を試奏し、C4で記録時のCH1周期、
 試奏は専用Workletとフェード用Gainを使い、同じAudioContext・Masterへ接続します。
 曲の停止位置・未再生PCM・編集中の共通音色・通常CH設定は変更しません。
 Copy to Autoは曲をPauseのまま設定だけを共通音色へ取り込み、Auto表示へ戻します。
-FilesのSave soundはこの共通Auto音色を`presets/`へ保存します。Captureだけではファイルを作りません。
+Filesの＋ Instrumentは名前を指定して共通Auto音色を`presets/`へ保存します。Captureだけではファイルを作りません。
 Channel横のSave to presetsは選択中のAuto／CHを直接`presets/`へ保存し、Capture・表示CH変更・Codeファイル選択・モード切替・再生停止は行いません。
 保存したJSONはFilesとPreset一覧へすぐ追加され、後で選択して読み込めます。保存だけで音色は適用しません。
 既知のWave／Noise／CH1 LFOペアを保存でき、未知のWave RAMや物理CHの一時的なDDA値は完全なPCM音色として保存できない理由を表示します。
@@ -884,6 +958,45 @@ LFOはCH1とCH2の両出力を扱い、アプリのMaster値は変更しませ�
 他チップの音を黙って省略せず、単一HuC6280とVGM 1.72の単一MSM5205以外や未対応データは理由付きで拒否します。
 MSM5205を含む曲のSeekは、両音源をまとめた状態保存形式がないため先頭から再構築します。
 CD-DAはVGMに含まれず、Codeから別の音声トラックを読み込んで利用します。実CD-ROMの読込・ゲーム実行は対象外です。
+
+## Sample-timed register operations in Synth Code
+
+New Cassettes include `examples/huc6280-timed.js` in Files. Existing restored
+projects are preserved. `build()` records hardware operations
+once; `schedule()` executes them in the AudioWorklet at sample boundaries.
+`atSeconds()` and `atSample()` are absolute offsets from the pattern's start;
+sample offsets default to a 44100 Hz reference, independent of the output device.
+A named pattern is replaced atomically by Apply. Stop cancels reservations;
+removing/replacing a liveLoop retires its reservations and owned hardware gates.
+This timing is separate from `beat()`/BPM and is software control of the chip.
+
+```javascript
+const pce = await useSoundChip("huc6280");
+const operations = pce.build(b => {
+  b.atSample(0).setNote(CH1, "E3").keyOn(CH1);
+  b.atSeconds(0.1).keyOff(CH1);
+});
+const snapshot = await pce.captureState();
+console.table(await pce.compile(operations, { initialState: snapshot }));
+await pce.schedule(operations, { name: "pulse", repeatSeconds: 0.2 });
+// await pce.clearSchedule("pulse");
+```
+
+Immediate `noteOn()`/`noteOff()` retain the Synth's Software Envelope and DDA
+sample feeder. Register reservations use explicit `setNote()` and `keyOn()` /
+`keyOff()` instead: recorded noteOn/off aliases reject with an explanation.
+Parameter edits retain an existing envelope; explicit hardware gates supersede
+it. A stale reserved release cannot cut a newer keyboard/immediate note.
+Bulk Wave RAM transfers and PCM feeding remain outside register reservations;
+R6 is accepted only when the virtual applied state enables DDA.
+
+`compile()` defaults to an acknowledged Worklet snapshot. `initialState: "reset"`
+and a previously captured snapshot need no state RPC and never alter live sound.
+Snapshots contain detached sent-register/control state, not native playback
+phase or transport state. `initialState: "client"` explicitly rejects because
+this Synth has no complete local register mirror. Playground Main/Worker also expose the register APIs; their hardware noteOn/off
+are raw gates, unlike the Synth software-envelope wrapper. npm exposure and
+Native timed execution remain pending; Native offline build/compile is available.
 
 ## Included sources
 

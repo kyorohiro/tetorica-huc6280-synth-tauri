@@ -4,12 +4,12 @@
   "sdk": {
     "schemaVersion": 1,
     "name": "tetorica-soundchip-native",
-    "version": "0.1.8-fm2608-mixer",
+    "version": "0.1.8-fm2608-source-mixer",
     "sourceCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
-    "archiveName": "tetorica-soundchip-native-ay-single-output-sources.zip",
-    "archiveSha256": "53dfb59440a29ca397dfaa6880dfa87fd205e57fe531ad8152177768a7294801",
-    "manifestSha256": "b3312faf56f7ddfb94f547a74ff99b583ad9ebf84baa9e447cd8e12f8eef0e4d",
-    "fileCount": 482,
+    "archiveName": "tetorica-soundchip-native-0.1.8-fm2608-source-mixer-sources.zip",
+    "archiveSha256": "9527a31da7f6d4d13464661d8fb7c3342f1045e41906a90d6ca2029e360af76f",
+    "manifestSha256": "0d1b6ec6760de1d6dc412f041ad88c9dcd939f1ebc15bcfd2c55f3eba16921bd",
+    "fileCount": 484,
     "unpublished": true,
     "localCandidate": {
       "baseCommit": "95cf71a857b15d0ea932ebf97d5fde80b5e80a95",
@@ -21,6 +21,7 @@
         "catalog/source_inventory.json",
         "docs/huc6280-local-candidate.json",
         "docs/huc6280-state.md",
+        "docs/ym2608-source-mixer.md",
         "native/CMakeLists.txt",
         "native/include/tetorica/huc6280.hpp",
         "native/include/tetorica/huc6280_state.h",
@@ -31,6 +32,7 @@
         "sdk.json",
         "tests/huc6280_state_wasm_smoke.mjs",
         "tests/ym2608_output_gains_wasm_smoke.mjs",
+        "tests/ym2608_source_gains_wasm_smoke.mjs",
         "vendor/mame-ay8910/README.md",
         "vendor/mame-ay8910/ay8910.cpp",
         "vendor/mame-ay8910/ay8910.h",
@@ -111,13 +113,13 @@
     },
     {
       "path": "native/cdda/README.md",
-      "bytes": 1577,
-      "sha256": "b74026571ff357d87db9722d6e26ce0c406cfdaee0b0f85664bba1d1dbe066a5"
+      "bytes": 1584,
+      "sha256": "6c993cd33c1291406b41e797894ea2dd49ce646e109ab7671463c47b7a5933a2"
     },
     {
       "path": "CDDA.md",
-      "bytes": 1112,
-      "sha256": "de2dba41f829641405cc34644452cfb07a876f800c124a7e5a188459baa35f96"
+      "bytes": 1119,
+      "sha256": "006dcc4f4b5a436fa9846b3671f1e0e0e6beff6f4c0ffea294c60a63b15691c6"
     }
   ],
   "modifications": [

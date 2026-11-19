@@ -1,6 +1,6 @@
 {
   "name": "tetorica-huc6280-synth-tauri",
-  "version": "0.99.995",
+  "version": "0.99.9992",
   "private": true,
   "scripts": {
     "dev": "tauri dev --no-dev-server",
